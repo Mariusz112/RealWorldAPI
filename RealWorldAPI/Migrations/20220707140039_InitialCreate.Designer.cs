@@ -12,8 +12,8 @@ using RealWorldApi.Data;
 namespace RealWorldAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220707084328_MyFirstMigration")]
-    partial class MyFirstMigration
+    [Migration("20220707140039_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -31,10 +31,6 @@ namespace RealWorldAPI.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Login")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Text")
                         .IsRequired()
@@ -57,6 +53,9 @@ namespace RealWorldAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int?>("ArticlesId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Comment")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -66,6 +65,8 @@ namespace RealWorldAPI.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ArticlesId");
 
                     b.ToTable("Comments");
                 });
@@ -81,9 +82,6 @@ namespace RealWorldAPI.Migrations
                     b.Property<int?>("ArticlesId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ArticlesId1")
-                        .HasColumnType("int");
-
                     b.Property<string>("Tag")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -92,27 +90,67 @@ namespace RealWorldAPI.Migrations
 
                     b.HasIndex("ArticlesId");
 
-                    b.HasIndex("ArticlesId1");
-
                     b.ToTable("Tags");
+                });
+
+            modelBuilder.Entity("RealWorldAPI.Models.Users", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("ArticlesId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArticlesId");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("RealWorldAPI.Models.Comments", b =>
+                {
+                    b.HasOne("RealWorldAPI.Models.Articles", null)
+                        .WithMany("Comment")
+                        .HasForeignKey("ArticlesId");
                 });
 
             modelBuilder.Entity("RealWorldAPI.Models.Tags", b =>
                 {
                     b.HasOne("RealWorldAPI.Models.Articles", null)
-                        .WithMany("Comments")
-                        .HasForeignKey("ArticlesId");
-
-                    b.HasOne("RealWorldAPI.Models.Articles", null)
                         .WithMany("Tag")
-                        .HasForeignKey("ArticlesId1");
+                        .HasForeignKey("ArticlesId");
+                });
+
+            modelBuilder.Entity("RealWorldAPI.Models.Users", b =>
+                {
+                    b.HasOne("RealWorldAPI.Models.Articles", null)
+                        .WithMany("Username")
+                        .HasForeignKey("ArticlesId");
                 });
 
             modelBuilder.Entity("RealWorldAPI.Models.Articles", b =>
                 {
-                    b.Navigation("Comments");
+                    b.Navigation("Comment");
 
                     b.Navigation("Tag");
+
+                    b.Navigation("Username");
                 });
 #pragma warning restore 612, 618
         }

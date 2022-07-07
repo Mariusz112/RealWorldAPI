@@ -11,6 +11,6 @@ public class ApplicationDbContext : DbContext
     }
     public DbSet<Articles> Articles { get; set; }
     public DbSet<Comments> Comments { get; set; }
-    public DbSet<Comments> Tags { get; set; }
-    public DbSet<Comments> Users { get; set; }
+    public DbSet<Tags> Tags { get; set; }
+    public DbSet<Users> Users { get; set; }
 }

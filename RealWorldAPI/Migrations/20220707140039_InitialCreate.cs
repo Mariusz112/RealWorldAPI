@@ -4,7 +4,7 @@
 
 namespace RealWorldAPI.Migrations
 {
-    public partial class MyFirstMigration : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,7 +14,6 @@ namespace RealWorldAPI.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Login = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -30,11 +29,17 @@ namespace RealWorldAPI.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Login = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Login = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ArticlesId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Comments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Comments_Articles_ArticlesId",
+                        column: x => x.ArticlesId,
+                        principalTable: "Articles",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -44,8 +49,7 @@ namespace RealWorldAPI.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Tag = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ArticlesId = table.Column<int>(type: "int", nullable: true),
-                    ArticlesId1 = table.Column<int>(type: "int", nullable: true)
+                    ArticlesId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -55,12 +59,33 @@ namespace RealWorldAPI.Migrations
                         column: x => x.ArticlesId,
                         principalTable: "Articles",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ArticlesId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tags_Articles_ArticlesId1",
-                        column: x => x.ArticlesId1,
+                        name: "FK_Users_Articles_ArticlesId",
+                        column: x => x.ArticlesId,
                         principalTable: "Articles",
                         principalColumn: "Id");
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_ArticlesId",
+                table: "Comments",
+                column: "ArticlesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tags_ArticlesId",
@@ -68,9 +93,9 @@ namespace RealWorldAPI.Migrations
                 column: "ArticlesId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tags_ArticlesId1",
-                table: "Tags",
-                column: "ArticlesId1");
+                name: "IX_Users_ArticlesId",
+                table: "Users",
+                column: "ArticlesId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -80,6 +105,9 @@ namespace RealWorldAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "Tags");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Articles");

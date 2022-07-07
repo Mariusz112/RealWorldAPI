@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace RealWorldAPI.Models
 {
@@ -7,10 +9,10 @@ namespace RealWorldAPI.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public string Login { get; set; }
+        public List<Users> Username { get; set; }
         public string Title { get; set; }
         public string Text { get; set; }
-        public List<Tags> Comments { get; set; }
+        public List<Comments> Comment { get; set; }
         public List<Tags> Tag { get; set; }
     }
 }
