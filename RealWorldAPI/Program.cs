@@ -14,9 +14,9 @@ namespace RealWorldAPI
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("Front", builder =>
-                    {
-                        builder.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
-                    });
+                {
+                    builder.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+                });
             });
 
             builder.Services.AddControllers();
@@ -43,7 +43,7 @@ namespace RealWorldAPI
 
             app.UseAuthorization();
 
-            
+
             app.MapControllers();
 
             app.Run();

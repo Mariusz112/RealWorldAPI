@@ -9,10 +9,10 @@ using RealWorldApi.Data;
 
 #nullable disable
 
-namespace RealWorldAPI.Migrations
+namespace RealWorldAPI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220707140039_InitialCreate")]
+    [Migration("20220708111846_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
