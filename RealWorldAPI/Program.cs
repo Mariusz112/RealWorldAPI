@@ -7,9 +7,17 @@ namespace RealWorldAPI
     {
         public static void Main(string[] args)
         {
+            var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("Front", builder =>
+                    {
+                        builder.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+                    });
+            });
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -21,6 +29,8 @@ namespace RealWorldAPI
 
 
             var app = builder.Build();
+            app.UseCors("Front");
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -33,7 +43,7 @@ namespace RealWorldAPI
 
             app.UseAuthorization();
 
-
+            
             app.MapControllers();
 
             app.Run();
