@@ -1,4 +1,4 @@
-﻿namespace RealWorldApp.Commons
+﻿namespace RealWorldApp.test
 {
     public class Class1
     {
