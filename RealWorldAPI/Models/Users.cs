@@ -13,5 +13,14 @@ namespace RealWorldAPI.Models
         public string Username { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
+        public string Feed { get; set; }
+        public string Bio { get; set; } = string.Empty;
+
+
+        //to nie wiem w sumie
+        public string Image { get; set; } = string.Empty;
+
+
+
     }
 }

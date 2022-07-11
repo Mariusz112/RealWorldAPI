@@ -1,7 +1,7 @@
 ﻿using RealWorldAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace RealWorldApi.Data;
+namespace RealWorldAPI.Data;
 
 public class ApplicationDbContext : DbContext
 {
@@ -9,8 +9,9 @@ public class ApplicationDbContext : DbContext
     {
 
     }
-    public DbSet<Articles> Articles { get; set; }
-    public DbSet<Comments> Comments { get; set; }
-    public DbSet<Tags> Tags { get; set; }
-    public DbSet<Users> Users { get; set; }
+    public DbSet<Articles> Title { get; set; }
+    public DbSet<Comments> Comment { get; set; }
+    public DbSet<Tags> Tag { get; set; }
+    public DbSet<Users> Username { get; set; }
+    public DbSet<Favorities> FollowerUsername { get; set; }
 }

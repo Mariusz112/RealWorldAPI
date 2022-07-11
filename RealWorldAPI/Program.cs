@@ -1,4 +1,4 @@
-using RealWorldApi.Data;
+using RealWorldAPI.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace RealWorldAPI

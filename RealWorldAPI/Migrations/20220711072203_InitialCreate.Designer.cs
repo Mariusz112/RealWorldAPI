@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using RealWorldApi.Data;
+using RealWorldAPI.Data;
 
 #nullable disable
 
-namespace RealWorldAPI.Data.Migrations
+namespace RealWorldAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220708111846_InitialCreate")]
+    [Migration("20220711072203_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,9 +40,13 @@ namespace RealWorldAPI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Topic")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Articles");
+                    b.ToTable("Title");
                 });
 
             modelBuilder.Entity("RealWorldAPI.Models.Comments", b =>
@@ -56,11 +60,21 @@ namespace RealWorldAPI.Data.Migrations
                     b.Property<int?>("ArticlesId")
                         .HasColumnType("int");
 
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Comment")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Login")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -68,7 +82,26 @@ namespace RealWorldAPI.Data.Migrations
 
                     b.HasIndex("ArticlesId");
 
-                    b.ToTable("Comments");
+                    b.HasIndex("AuthorId");
+
+                    b.ToTable("Comment");
+                });
+
+            modelBuilder.Entity("RealWorldAPI.Models.Favorities", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FollowerUsername");
                 });
 
             modelBuilder.Entity("RealWorldAPI.Models.Tags", b =>
@@ -90,7 +123,7 @@ namespace RealWorldAPI.Data.Migrations
 
                     b.HasIndex("ArticlesId");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tag");
                 });
 
             modelBuilder.Entity("RealWorldAPI.Models.Users", b =>
@@ -104,7 +137,22 @@ namespace RealWorldAPI.Data.Migrations
                     b.Property<int?>("ArticlesId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("FavoritiesId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Feed")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -120,7 +168,9 @@ namespace RealWorldAPI.Data.Migrations
 
                     b.HasIndex("ArticlesId");
 
-                    b.ToTable("Users");
+                    b.HasIndex("FavoritiesId");
+
+                    b.ToTable("Username");
                 });
 
             modelBuilder.Entity("RealWorldAPI.Models.Comments", b =>
@@ -128,6 +178,14 @@ namespace RealWorldAPI.Data.Migrations
                     b.HasOne("RealWorldAPI.Models.Articles", null)
                         .WithMany("Comment")
                         .HasForeignKey("ArticlesId");
+
+                    b.HasOne("RealWorldAPI.Models.Users", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("RealWorldAPI.Models.Tags", b =>
@@ -142,6 +200,10 @@ namespace RealWorldAPI.Data.Migrations
                     b.HasOne("RealWorldAPI.Models.Articles", null)
                         .WithMany("Username")
                         .HasForeignKey("ArticlesId");
+
+                    b.HasOne("RealWorldAPI.Models.Favorities", null)
+                        .WithMany("FollowerUsername")
+                        .HasForeignKey("FavoritiesId");
                 });
 
             modelBuilder.Entity("RealWorldAPI.Models.Articles", b =>
@@ -151,6 +213,11 @@ namespace RealWorldAPI.Data.Migrations
                     b.Navigation("Tag");
 
                     b.Navigation("Username");
+                });
+
+            modelBuilder.Entity("RealWorldAPI.Models.Favorities", b =>
+                {
+                    b.Navigation("FollowerUsername");
                 });
 #pragma warning restore 612, 618
         }
