@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using RealWorldApp.BAL.Services;
+using RealWorldApp.BAL.Services.Interfaces;
 using RealWorldApp.DAL;
 
 namespace RealWorldAPI
@@ -26,7 +28,7 @@ namespace RealWorldAPI
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
                     builder.Configuration.GetConnectionString("DefaultConnection")
                 ));
-
+            IServiceCollection serviceCollection = builder.Services.AddScoped<IUserService, UserService>();
 
             var app = builder.Build();
             app.UseCors("Front");
