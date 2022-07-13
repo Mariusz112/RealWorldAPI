@@ -21,6 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\RealWorldApp.Commons\RealWorldApp.Commons.csproj" />
 	  <ProjectReference Include="..\RealWorldApp.DAL\RealWorldApp.DAL.csproj" />
 	</ItemGroup>
 

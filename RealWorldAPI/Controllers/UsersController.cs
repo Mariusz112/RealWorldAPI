@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealWorldApp.DAL;
-using RealWorldApp.BAL.Models;
-using RealWorldApp.BAL.Services.Interfaces;
+using RealWorldApp.Commons.Models;
+using RealWorldApp.Commons.Interfaces;
 namespace RealWorldAPI.Controllers
 {
     [Authorize]
@@ -29,7 +29,7 @@ namespace RealWorldAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Authenticate(UserLogin model)
         {
-            string token = await _userService.GenerateJwt(model);
+            string token = await _userService.GenerateJwt(model.Email, model.Password);
 
             return Ok(token);
         }
