@@ -6,8 +6,8 @@ using RealWorldApp.Commons.Interfaces;
 namespace RealWorldAPI.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("api")]
+    //[ApiController]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -17,24 +17,46 @@ namespace RealWorldAPI.Controllers
             _userService = userService;
         }
 
-        [AllowAnonymous]
-        [HttpPost]
-        public async Task<IActionResult> RegisterUser(UserRegister request)
-        {
-            await _userService.AddUser(request);
-            return Ok();
-        }
 
         [AllowAnonymous]
-        [HttpPost("login")]
-        public async Task<IActionResult> Authenticate(UserLogin model)
+        [HttpPost("users")]
+        public async Task<IActionResult> RegisterUser([FromBody] UserRegisterContainer model)
         {
-            string token = await _userService.GenerateJwt(model.Email, model.Password);
+            UserResponseContainer user = await _userService.AddUser(model.User);
 
-            return Ok(token);
+
+            string token = await _userService.GenerateJwt(model.User.Email, model.User.Password);
+
+            user.User.token = token;
+
+            return Ok(user);
+        }//return response
+
+
+        [AllowAnonymous]
+        [HttpPost("users/login")]
+        public async Task<IActionResult> Authenticate([FromBody] UserLoginContainer model)
+        {
+            var user = await _userService.GetUserByEmail(model.User.Email);
+            string token = await _userService.GenerateJwt(model.User.Email, model.User.Password);
+
+
+            var response = new UserResponseContainer()
+            {
+                User = new UserResponse
+                {
+                    token = token,
+                    bio = user.User.bio,
+                    email = user.User.email,
+                    image = string.Empty,
+                    username = user.User.username,
+                }
+            };
+
+            return Ok(response);
         }
 
-        [HttpGet]
+        [HttpGet("users")]
         public async Task<IActionResult> GetUsers()
         {
             return Ok(await _userService.GetUsers());
@@ -46,10 +68,10 @@ namespace RealWorldAPI.Controllers
             return Ok(await _userService.GetUserByEmail(Email));
         }
 
-        [HttpGet("{Id}")]
-        public async Task<IActionResult> GetUserById(string Id)
+        [HttpGet("user")]
+        public async Task<IActionResult> GetMyInfo()
         {
-            return Ok(await _userService.GetUserById(Id));
+            return Ok(await _userService.GetMyInfo(User));
         }
 
         [HttpPut]

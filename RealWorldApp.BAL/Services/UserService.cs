@@ -116,7 +116,7 @@ namespace RealWorldApp.BAL.Services
 
 
             UserResponseContainer userContainer = new UserResponseContainer() { User = _mapper.Map<UserResponse>(user) };
-            userContainer.User.Token = token;
+            userContainer.User.token = token;
             return userContainer;
         }
 
@@ -134,11 +134,7 @@ namespace RealWorldApp.BAL.Services
 
         }
 
-        Task<ViewUserModel> IUserService.GetUserByEmail(string Email)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public async Task<ViewUserModel> GetUserById(string Id)
         {
            var user = await _userRepositorie.GetUserById(Id);

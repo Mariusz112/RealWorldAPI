@@ -8,6 +8,9 @@ namespace RealWorldApp.Commons.Models
 {
     public class UserRegisterContainer
     {
+        public string Username { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
         public UserRegister User { get; set; }
     }
 

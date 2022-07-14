@@ -39,10 +39,10 @@ namespace RealWebAppAPI.Controllers
             var response = new UserResponseContainer() {
             User  = new UserResponse { 
                 Token = token,
-                Bio = user.Bio,
-                Email = user.Email,
+                Bio = user.User.Bio,
+                Email = user.User.Email,
                 Image = string.Empty,
-                Username = user.Username,
+                Username = user.User.Username,
                 }
             };
 
