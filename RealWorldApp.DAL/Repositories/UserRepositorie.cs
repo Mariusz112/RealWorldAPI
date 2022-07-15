@@ -39,5 +39,9 @@ namespace RealWorldApp.DAL.Repositories
         {
             await _context.SaveChangesAsync();
         }
+        public async Task<User> GetUserByUsername(string Username)
+        {
+            return await _context.Users.Where(x => x.UserName == Username).FirstOrDefaultAsync();
+        }
     }
 }

@@ -2,14 +2,15 @@
 using RealWorldApp.Commons.Entities;
 using RealWorldApp.Commons.Models;
 
-namespace RealWorldAPI
-{
+namespace RealWorldApp.Commons
+{ 
     public class MappingProfile : Profile
     {
         public MappingProfile()
         {
             CreateMap<User, ViewUserModel>();
             CreateMap<User, UserResponse>();
+            CreateMap<User, ProfileView>();
         }
     }
 }

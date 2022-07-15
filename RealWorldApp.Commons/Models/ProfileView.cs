@@ -6,17 +6,15 @@ using System.Threading.Tasks;
 
 namespace RealWorldApp.Commons.Models
 {
-    public class UserUpdateModelContainer
+    public class UserViewContainer
     {
-        public UserUpdateModel User { get; set; }
+        public ProfileView Profile { get; set; }
     }
-    public class UserUpdateModel
+    public class ProfileView
     {
-        public string? Bio { get; set; }
-        public string Email { get; set; }
+        public string Bio { get; set; }
+        public bool following { get; set; } = false;
         public string Image { get; set; }
-        public string Password { get; set; }
         public string Username { get; set; }
-        
     }
 }

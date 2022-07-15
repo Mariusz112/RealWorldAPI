@@ -67,11 +67,18 @@ namespace RealWebAppAPI.Controllers
             return Ok(await _userService.GetMyInfo(User));
         }
 
+        [HttpGet("profiles/{Username}")]
+        public async Task<IActionResult> GetProfile([FromRoute] string Username)
+        {
+            return Ok(await _userService.GetProfile(Username));
+        }
+
         [HttpPut]
         public async Task<IActionResult> UpdateUser(string id, UserUpdateModel request)
         {
-            await _userService.UpdateUser(id, request);
-            return Ok();
+            
+            return Ok(await _userService.UpdateUser(id, request));
         }
+
     }
 }

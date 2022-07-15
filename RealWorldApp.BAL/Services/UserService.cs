@@ -55,6 +55,7 @@ namespace RealWorldApp.BAL.Services
             {
                 new Claim(ClaimTypes.Email, $"{user.Email}"),
                 new Claim(ClaimTypes.NameIdentifier, $"{user.Id}"),
+                new Claim(ClaimTypes.Name, $"{user.Id}"),
 
             };
 
@@ -116,21 +117,22 @@ namespace RealWorldApp.BAL.Services
 
 
             UserResponseContainer userContainer = new UserResponseContainer() { User = _mapper.Map<UserResponse>(user) };
-            userContainer.User.token = token;
+            userContainer.User.Token = token;
             return userContainer;
         }
 
-        public async Task UpdateUser(string id, UserUpdateModel request)
+        public async Task<UserResponseContainer> UpdateUser(string id, UserUpdateModel request)
         {
             var user = await _userRepositorie.GetUserById(id);
-
-            user.UserName = request.Username;
+            
             user.Bio = request.Bio;
-            user.Image = request.Image;
             user.Email = request.Email;
-            user.PasswordHash = _passwordHasher.HashPassword(user, request.Password);
-
+            user.Image = request.Image;
+            user.Password = request.Password;
+            user.UserName = request.Username;
             await _userRepositorie.SaveChangesAsync();
+            UserResponseContainer userContainer = new UserResponseContainer() { User = _mapper.Map<UserResponse>(user) };
+            return userContainer;
 
         }
 
@@ -147,6 +149,13 @@ namespace RealWorldApp.BAL.Services
             };
             return result;
         }
+        public async Task<UserViewContainer> GetProfile(string Username)
+        {
+            var user = await _userRepositorie.GetUserByUsername(Username);
+            UserViewContainer profileContainer = new UserViewContainer() { Profile = _mapper.Map<ProfileView>(user) };
 
+            return profileContainer;
+
+        }
     }
 }

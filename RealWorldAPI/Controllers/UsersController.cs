@@ -27,7 +27,7 @@ namespace RealWorldAPI.Controllers
 
             string token = await _userService.GenerateJwt(model.User.Email, model.User.Password);
 
-            user.User.token = token;
+            user.User.Token = token;
 
             return Ok(user);
         }//return response
@@ -45,11 +45,11 @@ namespace RealWorldAPI.Controllers
             {
                 User = new UserResponse
                 {
-                    token = token,
-                    bio = user.User.bio,
-                    email = user.User.email,
-                    image = string.Empty,
-                    username = user.User.username,
+                    Token = token,
+                    Bio = user.User.Bio,
+                    Email = user.User.Email,
+                    Image = string.Empty,
+                    Username = user.User.Username,
                 }
             };
 
@@ -74,11 +74,18 @@ namespace RealWorldAPI.Controllers
             return Ok(await _userService.GetMyInfo(User));
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateUser(string id, UserUpdateModel request)
+        [HttpPut("user")]
+        public async Task<IActionResult> UpdateUser([FromBody] UserUpdateModelContainer request)
         {
-            await _userService.UpdateUser(id, request);
+            var id = User.Identity.Name;
+            await _userService.UpdateUser(id, request.User);
             return Ok();
+        }
+
+        [HttpGet("profiles/{Username}")]
+        public async Task<IActionResult> GetProfile([FromRoute] string Username)
+        {
+            return Ok(await _userService.GetProfile(Username));
         }
     }
 }

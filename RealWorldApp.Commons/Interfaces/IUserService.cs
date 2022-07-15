@@ -11,8 +11,8 @@ namespace RealWorldApp.Commons.Interfaces
         Task<List<ViewUserModel>> GetUsers();
         Task<UserResponseContainer> GetUserByEmail(string Email);
         Task<UserResponseContainer> GetMyInfo(ClaimsPrincipal claims);
-        Task UpdateUser(string id, UserUpdateModel request);
+        Task<UserResponseContainer> UpdateUser(string id, UserUpdateModel request);
         Task<ViewUserModel> GetUserById(string Id);
-
+        Task<UserViewContainer> GetProfile(string Username);
     }
 }
