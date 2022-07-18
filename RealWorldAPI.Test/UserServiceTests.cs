@@ -160,7 +160,7 @@ namespace RealWorldAPI.Test
                 Email = "Test1",
                 Username = "534534543"
             };
-            ACT
+            //ACT
             Mock<IMapper> mockMapper = new Mock<IMapper>();
             mockMapper.Setup(x => x.Map<UserResponse>(It.IsAny<User>())).Returns(response);
             //ASSERT
