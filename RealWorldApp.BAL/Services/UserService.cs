@@ -14,6 +14,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+
 namespace RealWorldApp.BAL.Services
 {
     public class UserService : IUserService
@@ -23,13 +25,15 @@ namespace RealWorldApp.BAL.Services
         private readonly IMapper _mapper;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly AuthenticationSettings _authenticationSettings;
+        private readonly UserManager<User> _userManager;
 
-        public UserService(IUserRepositorie userRepositorie, IMapper mapper, IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticationSettings)
+        public UserService(IUserRepositorie userRepositorie, IMapper mapper, IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticationSettings, UserManager<User> userManager)
         {
             _userRepositorie = userRepositorie;
             _mapper = mapper;
             _passwordHasher = passwordHasher;
             _authenticationSettings = authenticationSettings;
+            _userManager = userManager;
         }
 
         public async Task<string> GenerateJwt(string email, string password)
@@ -82,10 +86,7 @@ namespace RealWorldApp.BAL.Services
                 Email = request.Email
             };
 
-            var hashPassword = _passwordHasher.HashPassword(user, request.Password);
-            user.PasswordHash = hashPassword;
-
-            await _userRepositorie.AddUser(user);
+            var result = await _userManager.CreateAsync(user, request.Password);
 
             UserResponseContainer userContainer = new UserResponseContainer() { User = _mapper.Map<UserResponse>(user) };
 
@@ -94,8 +95,8 @@ namespace RealWorldApp.BAL.Services
 
         public async Task<List<ViewUserModel>> GetUsers()
         {
-            var users = await _userRepositorie.GetUsers();
-            return _mapper.Map<List<ViewUserModel>>(users);
+            var usersList = await _userManager.Users.ToListAsync();
+            return _mapper.Map<List<ViewUserModel>>(usersList);
         }
 
         public async Task<UserResponseContainer> GetUserByEmail(string Email)
@@ -109,9 +110,9 @@ namespace RealWorldApp.BAL.Services
         public async Task<UserResponseContainer> GetMyInfo(ClaimsPrincipal claims)
         {
             var id = claims.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _userRepositorie.GetUserById(id);
-            
-            
+            var user = await _userManager.FindByIdAsync(id);
+
+
             string token = await GenerateJwt(user.Email,user.PasswordHash);
 
 
@@ -122,8 +123,8 @@ namespace RealWorldApp.BAL.Services
 
         public async Task<UserResponseContainer> UpdateUser(string id, UserUpdateModel request)
         {
-            var user = await _userRepositorie.GetUserById(id);
-            
+            var user = await _userManager.FindByIdAsync(id);
+
             user.Bio = request.Bio;
             user.Email = request.Email;
             user.Image = request.Image;
@@ -150,7 +151,8 @@ namespace RealWorldApp.BAL.Services
         }
         public async Task<UserViewContainer> GetProfile(string Username)
         {
-            var user = await _userRepositorie.GetUserByUsername(Username);
+            var user = await _userManager.FindByNameAsync(Username);
+
             UserViewContainer profileContainer = new UserViewContainer() { Profile = _mapper.Map<ProfileView>(user) };
 
             return profileContainer;

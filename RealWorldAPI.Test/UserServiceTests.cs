@@ -11,10 +11,10 @@ namespace RealWorldAPI.Test
 {
     public class UserServiceTests
     {
-        private Mock<PasswordHasher<User>> GetMockPasswordHasher()
+        private Mock<UserManager<User>> GetMockUserManager()
         {
             var userStoreMock = new Mock<IUserStore<User>>();
-            return new Mock<PasswordHasher<User>>(
+            return new Mock<UserManager<User>>(
             userStoreMock.Object, null, null, null, null, null, null, null, null);
         }
 
@@ -53,15 +53,15 @@ namespace RealWorldAPI.Test
             
             string hashPassword = string.Empty;
 
-           
-            Mock<IPasswordHasher<User>> passwordHasher = new Mock<IPasswordHasher<User>>();
-            passwordHasher.Setup(x => x.HashPassword(It.IsAny<User>(), It.IsAny<string>())).Returns(hashPassword);
+
+            Mock<UserManager<User>> userManager = GetMockUserManager();
+            userManager.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
 
 
             Mock<IUserRepositorie> mockRepostiory = new Mock<IUserRepositorie>();
             mockRepostiory.Setup(x => x.AddUser(It.IsAny<User>())).Returns(Task.CompletedTask);
 
-            var userService = new UserService(mockRepostiory.Object, mockMapper.Object, passwordHasher.Object, null);
+            var userService = new UserService(mockRepostiory.Object, mockMapper.Object, null, null, userManager.Object);
             //ACT
             var AddedUser = await userService.AddUser(user); 
             //ASSERT
@@ -95,6 +95,7 @@ namespace RealWorldAPI.Test
                 }
             };
 
+
             //mockup
             Mock<IMapper> mockMapper = new Mock<IMapper>();
             mockMapper.Setup(x => x.Map<UserResponse>(It.IsAny<User>())).Returns(response);
@@ -103,14 +104,14 @@ namespace RealWorldAPI.Test
             string hashPassword = string.Empty;
 
 
-            Mock<IPasswordHasher<User>> passwordHasher = new Mock<IPasswordHasher<User>>();
-            passwordHasher.Setup(x => x.HashPassword(It.IsAny<User>(), It.IsAny<string>())).Returns(hashPassword);
+            Mock<UserManager<User>> userManager = GetMockUserManager();
+            userManager.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
 
 
             Mock<IUserRepositorie> mockRepostiory = new Mock<IUserRepositorie>();
             mockRepostiory.Setup(x => x.AddUser(It.IsAny<User>())).Returns(Task.CompletedTask);
 
-            var userService = new UserService(mockRepostiory.Object, mockMapper.Object, passwordHasher.Object, null);
+            var userService = new UserService(mockRepostiory.Object, mockMapper.Object, null, null, userManager.Object);
             //ACT
             var AddedUser = await userService.AddUser(user);
             //ASSERT
