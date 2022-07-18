@@ -24,6 +24,16 @@ namespace RealWorldAPI
             var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
             var builder = WebApplication.CreateBuilder(args);
 
+            
+
+            var logger = LoggerFactory.Create(config =>
+            {
+                config.AddConsole();
+            }).CreateLogger("Program");
+
+            
+
+
             var authenticationSettings = new AuthenticationSettings();
 
             builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
@@ -119,6 +129,15 @@ namespace RealWorldAPI
             builder.Services.AddSingleton(mapper);
 
             var app = builder.Build();
+            app.MapGet("/", () => "Hello World!");
+
+            app.MapGet("/Test", async context =>
+            {
+                logger.LogInformation("Testing logging in Program.cs");
+                await context.Response.WriteAsync("Testing");
+            });
+
+
             app.UseCors("Front");
 
 
