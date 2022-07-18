@@ -119,5 +119,60 @@ namespace RealWorldAPI.Test
             Assert.That(AddedUser.User.Username, !Is.EqualTo(expected.User.Username));
 
         }
+
+        [Test]
+        public async Task UserResponse_WithInCorrectData_Test()
+        {
+            UserResponse user = new UserResponse();
+            
+            //ARRANGE
+            UserResponse Email = new UserResponse()
+            {
+                Email = "Test1",
+                Username = "Test3"
+            };
+
+            UserResponse response = new UserResponse()
+            {
+                Email = "Test1",
+                Username = "Test3"
+            };
+            //ACT
+            Mock<IMapper> mockMapper = new Mock<IMapper>();
+            //ASSERT
+            mockMapper.Setup(x => x.Map<UserResponse>(It.IsAny<User>())).Returns(response);
+
+        }
+        [Test]
+        public async Task UserResponse_WithInInCorrectData_Test()
+        {
+            UserResponse user = new UserResponse();
+
+            //ARRANGE
+            UserResponse Email = new UserResponse()
+            {
+                Email = "Test1",
+                Username = "Test3"
+            };
+
+            UserResponse response = new UserResponse()
+            {
+                Email = "Test1",
+                Username = "534534543"
+            };
+            ACT
+            Mock<IMapper> mockMapper = new Mock<IMapper>();
+            mockMapper.Setup(x => x.Map<UserResponse>(It.IsAny<User>())).Returns(response);
+            //ASSERT
+            static bool tru(UserResponse email, UserResponse response) { 
+            if (email != response)
+                return true;
+            else
+                return false;
+            }
+        }
+
+
+
     }
 }
