@@ -5,15 +5,16 @@ using RealWorldApp.BAL.Services;
 using RealWorldApp.Commons.Entities;
 using RealWorldApp.Commons.Models;
 using RealWorldApp.DAL.Repositories;
+using RealWorldApp.DAL.Repositories.Interfaces;
 
 namespace RealWorldAPI.Test
 {
     public class UserServiceTests
     {
-        private Mock<UserManager<User>> GetMockUserManager()
+        private Mock<PasswordHasher<User>> GetMockPasswordHasher()
         {
             var userStoreMock = new Mock<IUserStore<User>>();
-            return new Mock<UserManager<User>>(
+            return new Mock<PasswordHasher<User>>(
             userStoreMock.Object, null, null, null, null, null, null, null, null);
         }
 
@@ -51,15 +52,19 @@ namespace RealWorldAPI.Test
 
             //Mock<UserManager<User>> userManager = GetMockUserManager();
             //userManager.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
-
+            string hashPassword = string.Empty;
 
             //to jest ca³kowicie to zmiany
-            Mock<UserManager<User>> userManager = GetMockUserManager();
-            userManager.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+            Mock<IPasswordHasher<User>> passwordHasher = new Mock<IPasswordHasher<User>>();
+            passwordHasher.Setup(x => x.HashPassword(It.IsAny<User>(), It.IsAny<string>())).Returns(hashPassword);
 
-            var userService = new UserService(null, mockMapper.Object, null, null);
+
+            Mock<IUserRepositorie> mockRepostiory = new Mock<IUserRepositorie>();
+            mockRepostiory.Setup(x => x.AddUser(It.IsAny<User>())).Returns(Task.CompletedTask);
+
+            var userService = new UserService(mockRepostiory.Object, mockMapper.Object, passwordHasher.Object, null);
             //ACT
-            var AddedUser = await userService.AddUser(user); ;
+            var AddedUser = await userService.AddUser(user); 
             //ASSERT
             Assert.IsNotNull(AddedUser);
             mockMapper.Verify(x => x.Map<UserResponse>(It.IsAny<User>()), Times.Once());

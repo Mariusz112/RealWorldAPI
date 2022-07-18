@@ -76,14 +76,13 @@ namespace RealWorldApp.BAL.Services
 
         public async Task<UserResponseContainer> AddUser(UserRegister request)
         {
-            var user = new User()
+            User user = new User()
             {
                 UserName = request.Username,
                 Email = request.Email
             };
 
             var hashPassword = _passwordHasher.HashPassword(user, request.Password);
-
             user.PasswordHash = hashPassword;
 
             await _userRepositorie.AddUser(user);
