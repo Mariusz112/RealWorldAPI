@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealWorldApp.DAL", "RealWor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealWorldApp.Commons", "RealWorldApp.Commons\RealWorldApp.Commons.csproj", "{B76FC8ED-F717-4CEC-93EF-4DEC3CDC2DE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealWorldAppAPI", "RealWorldAppAPI\RealWorldAppAPI.csproj", "{9B1B85BE-6B81-4425-96D1-F1EA227AAA70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealWorldAppAPI", "RealWorldAppAPI\RealWorldAppAPI.csproj", "{9B1B85BE-6B81-4425-96D1-F1EA227AAA70}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealWorldAPI.Test", "RealWorldAPI.Test\RealWorldAPI.Test.csproj", "{BA98D34B-00E4-4AC9-9E29-7E9F21B2891F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{9B1B85BE-6B81-4425-96D1-F1EA227AAA70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B1B85BE-6B81-4425-96D1-F1EA227AAA70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B1B85BE-6B81-4425-96D1-F1EA227AAA70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA98D34B-00E4-4AC9-9E29-7E9F21B2891F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA98D34B-00E4-4AC9-9E29-7E9F21B2891F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA98D34B-00E4-4AC9-9E29-7E9F21B2891F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA98D34B-00E4-4AC9-9E29-7E9F21B2891F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
