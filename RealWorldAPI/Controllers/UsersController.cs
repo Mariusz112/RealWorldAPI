@@ -7,7 +7,7 @@ namespace RealWorldAPI.Controllers
 {
     [Authorize]
     [Route("api")]
-    //[ApiController]
+    [ApiController]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -22,14 +22,23 @@ namespace RealWorldAPI.Controllers
         [HttpPost("users")]
         public async Task<IActionResult> RegisterUser([FromBody] UserRegisterContainer model)
         {
-            UserResponseContainer user = await _userService.AddUser(model.User);
+            try
+            {
+                UserResponseContainer user = await _userService.AddUser(model.User);
 
 
-            string token = await _userService.GenerateJwt(model.User.Email, model.User.Password);
+                string token = await _userService.GenerateJwt(model.User.Email, model.User.Password);
 
-            user.User.Token = token;
+                user.User.Token = token;
 
-            return Ok(user);
+                return Ok(user);
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.Message);
+            }
+          
         }//return response
 
 
@@ -37,23 +46,35 @@ namespace RealWorldAPI.Controllers
         [HttpPost("users/login")]
         public async Task<IActionResult> Authenticate([FromBody] UserLoginContainer model)
         {
-            var user = await _userService.GetUserByEmail(model.User.Email);
-            string token = await _userService.GenerateJwt(model.User.Email, model.User.Password);
+            
 
 
-            var response = new UserResponseContainer()
+            try
             {
-                User = new UserResponse
-                {
-                    Token = token,
-                    Bio = user.User.Bio,
-                    Email = user.User.Email,
-                    Image = string.Empty,
-                    Username = user.User.Username,
-                }
-            };
+                var user = await _userService.GetUserByEmail(model.User.Email);
+                string token = await _userService.GenerateJwt(model.User.Email, model.User.Password);
 
-            return Ok(response);
+
+                var response = new UserResponseContainer()
+                {
+                    User = new UserResponse
+                    {
+                        Token = token,
+                        Bio = user.User.Bio,
+                        Email = user.User.Email,
+                        Image = string.Empty,
+                        Username = user.User.Username,
+                   
+                    }
+                };
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.Message);
+            }
+           
         }
 
         [HttpGet("users")]

@@ -83,10 +83,17 @@ namespace RealWorldApp.BAL.Services
             User user = new User()
             {
                 UserName = request.Username,
-                Email = request.Email
+                Email = request.Email,
+                Password = request.Password
             };
 
-            var result = await _userManager.CreateAsync(user, request.Password);
+            var result = await _userManager.CreateAsync(user);
+
+            if (!result.Succeeded)
+            {
+                var error = string.Join(", ", result.Errors.Select(x => x.Description));
+                throw new ArgumentException(error);
+            }
 
             UserResponseContainer userContainer = new UserResponseContainer() { User = _mapper.Map<UserResponse>(user) };
 
