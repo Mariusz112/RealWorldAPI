@@ -37,25 +37,8 @@ namespace RealWorldApp.BAL.Services
 
         public async Task<string> GenerateJwt(string email, string password)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-
-            if (user is null)
-            {
-                _logger.LogError("Invalid username or password");
-                throw new BadRequestException("Invalid username or password");
-            }
-
-            if (!password.Equals(user.PasswordHash))
-            {
-                var result = await _userManager.CheckPasswordAsync(user, password);
-
-                if (!result)
-                {
-                    _logger.LogError("Invalid username or password");
-                    throw new BadRequestException("Invalid username or password");
-                }
-            }
-
+            User? user = await ValidateUser(email, password);
+            //Przenieś Usera do góry validacja już w tym miejscu nie jest potrzebna
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Email, $"{user.Email}"),
@@ -79,6 +62,31 @@ namespace RealWorldApp.BAL.Services
             return tokenHandler.WriteToken(token);
         }
 
+        private async Task<User> ValidateUser(string email, string password)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user is null)
+            {
+                _logger.LogError("Invalid username or password");
+                throw new BadRequestException("Invalid username or password");
+            }
+            //string hashpass = _userManager.PasswordHasher.HashPassword(user, password);
+          //  if (!password.Equals(user.PasswordHash))
+            //{
+                
+                var result = await _userManager.CheckPasswordAsync(user, password);
+
+                if (!result)
+                {
+                    _logger.LogError("Invalid username or password");
+                    throw new BadRequestException("Invalid username or password");
+                }
+         //   }
+
+            return user;
+        }
+
         public async Task<UserResponseContainer> AddUser(UserRegister request)
         {
             User user = new User()
@@ -87,12 +95,20 @@ namespace RealWorldApp.BAL.Services
                 Email = request.Email,
             };
 
+            var emailResult = await _userManager.CreateAsync(user, request.Password);
+
+            if (emailResult != null)
+            {
+                _logger.LogError(", ", emailResult.Errors.Select(x => x.Description));
+                throw new ArgumentException("Email already taken");
+            }
+
             var result = await _userManager.CreateAsync(user, request.Password);
 
             if (!result.Succeeded)
             {
-                var error = string.Join(", ", result.Errors.Select(x => x.Description));
-                throw new ArgumentException(error);
+                _logger.LogError(", ", result.Errors.Select(x => x.Description));
+                throw new BadRequestException(string.Join( ", ", result.Errors.Select(x => x.Description)));
             }
 
             UserResponseContainer userContainer = new UserResponseContainer() { User = _mapper.Map<UserResponse>(user) };
