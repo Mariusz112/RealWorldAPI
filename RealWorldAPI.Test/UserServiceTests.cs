@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Moq;
+using RealWorldApp.BAL;
 using RealWorldApp.BAL.Services;
 using RealWorldApp.Commons.Entities;
 using RealWorldApp.Commons.Models;
@@ -54,7 +55,7 @@ namespace RealWorldAPI.Test
             Mock<ILogger<UserService>> mockLogger = new Mock<ILogger<UserService>>();
 
             
-            string hashPassword = string.Empty;
+            //string hashPassword = string.Empty;
 
 
             Mock<UserManager<User>> userManager = GetMockUserManager();
@@ -105,15 +106,12 @@ namespace RealWorldAPI.Test
             Mock<ILogger<UserService>> mockLogger = new Mock<ILogger<UserService>>();
 
 
-            string hashPassword = string.Empty;
+            //string hashPassword = string.Empty;
 
 
             Mock<UserManager<User>> userManager = GetMockUserManager();
             userManager.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
 
-
-            //Mock<UserManager<User>> userManager = GetMockUserManager();
-            //mockRepostiory.Setup(x => x.AddUser(It.IsAny<User>())).Returns(Task.CompletedTask);
 
             var userService = new UserService(mockLogger.Object, mockMapper.Object, null, userManager.Object);
             //ACT
@@ -122,6 +120,45 @@ namespace RealWorldAPI.Test
             Assert.IsNotNull(AddedUser);
             mockMapper.Verify(x => x.Map<UserResponse>(It.IsAny<User>()), Times.Once());
             Assert.That(AddedUser.User.Username, !Is.EqualTo(expected.User.Username));
+
+        }
+
+        
+        [Test]
+        public async Task GenerateJWT_WithCorrectData_Test()
+        {
+            UserLogin userLogin = new UserLogin
+            {
+                Email = "test@test.com",
+                Password = "test!@4",
+            };
+            User user = new User
+            {
+                Email = "test@test.com",
+                PasswordHash = "test!@4",
+            };
+
+
+            AuthenticationSettings authenticationSettings = new AuthenticationSettings()
+            {
+                JwtKey = "PRIVATE_KEY_DONT_SHARE",
+                JwtExpireDays = 5,
+                JwtIssuer = "http://localhost:47765"
+            };
+
+            Mock<UserManager<User>> userManager = GetMockUserManager();
+
+            userManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(user);
+            userManager.Setup(x => x.CheckPasswordAsync(user, userLogin.Password)).ReturnsAsync(true);
+
+            var userService = new UserService(null, null, authenticationSettings, userManager.Object);
+
+            
+
+            var jwt = await userService.GenerateJwt(userLogin.Email, userLogin.Password);
+           
+            Assert.IsNotNull(jwt);
+
 
         }
     }
