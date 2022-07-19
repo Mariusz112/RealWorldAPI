@@ -15,43 +15,44 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace RealWorldApp.BAL.Services
 {
     public class UserService : IUserService
     {
 
-        private readonly IUserRepositorie _userRepositorie;
+        private readonly ILogger<UserService> _logger;
         private readonly IMapper _mapper;
-        private readonly IPasswordHasher<User> _passwordHasher;
         private readonly AuthenticationSettings _authenticationSettings;
         private readonly UserManager<User> _userManager;
 
-        public UserService(IUserRepositorie userRepositorie, IMapper mapper, IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticationSettings, UserManager<User> userManager)
+        public UserService(ILogger<UserService> logger, IMapper mapper, AuthenticationSettings authenticationSettings, UserManager<User> userManager)
         {
-            _userRepositorie = userRepositorie;
+            _logger = logger;
             _mapper = mapper;
-            _passwordHasher = passwordHasher;
             _authenticationSettings = authenticationSettings;
             _userManager = userManager;
         }
 
         public async Task<string> GenerateJwt(string email, string password)
         {
-            var user = await _userRepositorie.GetUserByEmail(email);
+            var user = await _userManager.FindByEmailAsync(email);
 
             if (user is null)
             {
-                throw new Exception("Invalid username or password");
+                _logger.LogError("Invalid username or password");
+                throw new BadRequestException("Invalid username or password");
             }
 
-            if (_passwordHasher.Equals(password == user.PasswordHash))
+            if (!password.Equals(user.PasswordHash))
             {
-                var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
+                var result = await _userManager.CheckPasswordAsync(user, password);
 
-                if (result == PasswordVerificationResult.Failed)
+                if (!result)
                 {
-                    throw new Exception("Invalid username or password");
+                    _logger.LogError("Invalid username or password");
+                    throw new BadRequestException("Invalid username or password");
                 }
             }
 
@@ -84,10 +85,9 @@ namespace RealWorldApp.BAL.Services
             {
                 UserName = request.Username,
                 Email = request.Email,
-                Password = request.Password
             };
 
-            var result = await _userManager.CreateAsync(user);
+            var result = await _userManager.CreateAsync(user, request.Password);
 
             if (!result.Succeeded)
             {
@@ -108,7 +108,7 @@ namespace RealWorldApp.BAL.Services
 
         public async Task<UserResponseContainer> GetUserByEmail(string Email)
         {
-            var user = await _userRepositorie.GetUserByEmail(Email);
+            var user = await _userManager.FindByEmailAsync(Email);
             UserResponseContainer userContainer = new UserResponseContainer() { User = _mapper.Map<UserResponse>(user) };
 
             return userContainer;
@@ -132,12 +132,16 @@ namespace RealWorldApp.BAL.Services
         {
             var user = await _userManager.FindByIdAsync(id);
 
+
+
             user.Bio = request.Bio;
             user.Email = request.Email;
             user.Image = request.Image;
-            user.Password = request.Password;
+            //user.Password = request.Password;
             user.UserName = request.Username;
-            await _userRepositorie.SaveChangesAsync();
+            var result = await _userManager.UpdateAsync(user);
+
+
             UserResponseContainer userContainer = new UserResponseContainer() { User = _mapper.Map<UserResponse>(user) };
             return userContainer;
 
@@ -146,7 +150,7 @@ namespace RealWorldApp.BAL.Services
         
         public async Task<ViewUserModel> GetUserById(string Id)
         {
-           var user = await _userRepositorie.GetUserById(Id);
+           var user = await _userManager.FindByIdAsync(Id);
            var result = new ViewUserModel() { 
            Id = user.Id,  
            Email = user.Email,

@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Moq;
 using RealWorldApp.BAL.Services;
 using RealWorldApp.Commons.Entities;
@@ -50,6 +51,8 @@ namespace RealWorldAPI.Test
             Mock<IMapper> mockMapper = new Mock<IMapper>();
             mockMapper.Setup(x => x.Map<UserResponse>(It.IsAny<User>())).Returns(response);
 
+            Mock<ILogger<UserService>> mockLogger = new Mock<ILogger<UserService>>();
+
             
             string hashPassword = string.Empty;
 
@@ -58,10 +61,10 @@ namespace RealWorldAPI.Test
             userManager.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
 
 
-            Mock<IUserRepositorie> mockRepostiory = new Mock<IUserRepositorie>();
-            mockRepostiory.Setup(x => x.AddUser(It.IsAny<User>())).Returns(Task.CompletedTask);
+            //Mock<UserManager<User>> userManager = GetMockUserManager();
+            //mockRepostiory.Setup(x => x.AddUser(It.IsAny<User>())).Returns(Task.CompletedTask);
 
-            var userService = new UserService(mockRepostiory.Object, mockMapper.Object, null, null, userManager.Object);
+            var userService = new UserService(mockLogger.Object,mockMapper.Object, null, userManager.Object);
             //ACT
             var AddedUser = await userService.AddUser(user); 
             //ASSERT
@@ -95,10 +98,11 @@ namespace RealWorldAPI.Test
                 }
             };
 
-
             //mockup
             Mock<IMapper> mockMapper = new Mock<IMapper>();
             mockMapper.Setup(x => x.Map<UserResponse>(It.IsAny<User>())).Returns(response);
+
+            Mock<ILogger<UserService>> mockLogger = new Mock<ILogger<UserService>>();
 
 
             string hashPassword = string.Empty;
@@ -108,10 +112,10 @@ namespace RealWorldAPI.Test
             userManager.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
 
 
-            Mock<IUserRepositorie> mockRepostiory = new Mock<IUserRepositorie>();
-            mockRepostiory.Setup(x => x.AddUser(It.IsAny<User>())).Returns(Task.CompletedTask);
+            //Mock<UserManager<User>> userManager = GetMockUserManager();
+            //mockRepostiory.Setup(x => x.AddUser(It.IsAny<User>())).Returns(Task.CompletedTask);
 
-            var userService = new UserService(mockRepostiory.Object, mockMapper.Object, null, null, userManager.Object);
+            var userService = new UserService(mockLogger.Object, mockMapper.Object, null, userManager.Object);
             //ACT
             var AddedUser = await userService.AddUser(user);
             //ASSERT

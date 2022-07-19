@@ -39,7 +39,7 @@ namespace RealWorldAPI.Controllers
                 return BadRequest(e.Message);
             }
           
-        }//return response
+        }
 
 
         [AllowAnonymous]
