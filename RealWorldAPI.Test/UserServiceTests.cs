@@ -54,16 +54,13 @@ namespace RealWorldAPI.Test
 
             Mock<ILogger<UserService>> mockLogger = new Mock<ILogger<UserService>>();
 
-            
+
             //string hashPassword = string.Empty;
 
 
             Mock<UserManager<User>> userManager = GetMockUserManager();
+            userManager.Setup(x => x.FindByEmailAsync(user.Email)).ReturnsAsync(It.IsAny<User>());
             userManager.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
-
-
-            //Mock<UserManager<User>> userManager = GetMockUserManager();
-            //mockRepostiory.Setup(x => x.AddUser(It.IsAny<User>())).Returns(Task.CompletedTask);
 
             var userService = new UserService(mockLogger.Object,mockMapper.Object, null, userManager.Object);
             //ACT

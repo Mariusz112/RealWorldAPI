@@ -7,7 +7,7 @@ namespace RealWorldAPI.Controllers
 {
     [Authorize]
     [Route("api")]
-    [ApiController]
+    //[ApiController]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -38,7 +38,7 @@ namespace RealWorldAPI.Controllers
 
                 return BadRequest(e.Message);
             }
-          
+
         }
 
 
@@ -46,7 +46,7 @@ namespace RealWorldAPI.Controllers
         [HttpPost("users/login")]
         public async Task<IActionResult> Authenticate([FromBody] UserLoginContainer model)
         {
-            
+
 
 
             try
@@ -64,7 +64,7 @@ namespace RealWorldAPI.Controllers
                         Email = user.User.Email,
                         Image = string.Empty,
                         Username = user.User.Username,
-                   
+
                     }
                 };
                 return Ok(response);
@@ -74,7 +74,7 @@ namespace RealWorldAPI.Controllers
 
                 return BadRequest(e.Message);
             }
-           
+
         }
 
         [HttpGet("users")]
