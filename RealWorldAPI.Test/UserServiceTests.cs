@@ -230,5 +230,58 @@ namespace RealWorldAPI.Test
                 .And.Message.EqualTo("Invalid username or password"),
                 async delegate { await userService.GenerateJwt("test@test.com", "test"); });
         }
+
+        [Test]
+        public async Task UpdateUser_WithCorrectData_Test() {
+
+            User userBeforeUpdate = new User
+            {
+                Bio = "Test",
+                Email = "test@test.com",
+                Image = "Test",
+                UserName = "Test",
+
+            };
+
+            UserUpdateModelContainer updatedUser = new UserUpdateModelContainer()
+            {
+                User = new UserUpdateModel 
+                {
+                    Bio = "Test1",
+                    Email = "test@test.com1",
+                    Image = "Test1",
+                    Username = "Test1",
+                }
+            };
+
+
+            UserUpdateModelContainer stateAfterUpdate = new UserUpdateModelContainer()
+            {
+                User = new UserUpdateModel
+                {
+                    Bio = "Test1",
+                    Email = "test@t234t.com1",
+                    Image = "Test1",
+                    Username = "Username1",
+                }
+            };
+
+            Mock<UserManager<User>> mockUserManager = GetMockUserManager();
+            mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(userBeforeUpdate);
+            mockUserManager.Setup(x => x.UpdateAsync(It.IsAny<User>())).ReturnsAsync(IdentityResult.Success);
+
+            Mock<IPasswordHasher<User>> mockPasswordHasher = new Mock<IPasswordHasher<User>>();
+            mockPasswordHasher.Setup(x => x.HashPassword(It.IsAny<User>(), It.IsAny<string>())).Returns(userBeforeUpdate.PasswordHash);
+
+            Assert.IsTrue(stateAfterUpdate.GetType) == 
+
+
+
+
+
+        }
+
+
+
     }
 }

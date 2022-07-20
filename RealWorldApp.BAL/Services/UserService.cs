@@ -96,7 +96,13 @@ namespace RealWorldApp.BAL.Services
             }
 
 
-
+/*
+            if (!emailResult.Succeeded)
+            {
+                _logger.LogError(", ", emailResult.Errors.Select(x => x.Description));
+                throw new BadRequestException(string.Join( ", ", emailResult.Errors.Select(x => x.Description)));
+            }
+*/
             UserResponseContainer userContainer = new UserResponseContainer() { User = _mapper.Map<UserResponse>(user) };
 
             return userContainer;
@@ -134,6 +140,13 @@ namespace RealWorldApp.BAL.Services
         {
             var user = await _userManager.FindByIdAsync(id);
 
+            if ( user == null)
+            {
+                _logger.LogError("Bad request for user");
+                throw new BadRequestException("Bad request for user");
+
+            }
+
 
 
             user.Bio = request.Bio;
@@ -143,6 +156,11 @@ namespace RealWorldApp.BAL.Services
             user.UserName = request.Username;
             var result = await _userManager.UpdateAsync(user);
 
+            if (!result.Succeeded)
+            {
+                _logger.LogError(string.Join(", ", result.Errors.Select(x => x.Description)));
+                throw new BadRequestException(string.Join(" ", result.Errors.Select(x => x.Description)));
+            }
 
             UserResponseContainer userContainer = new UserResponseContainer() { User = _mapper.Map<UserResponse>(user) };
             return userContainer;
