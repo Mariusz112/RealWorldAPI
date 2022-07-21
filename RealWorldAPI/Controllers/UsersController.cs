@@ -108,5 +108,6 @@ namespace RealWorldAPI.Controllers
         {
             return Ok(await _userService.GetProfile(Username));
         }
+
     }
 }

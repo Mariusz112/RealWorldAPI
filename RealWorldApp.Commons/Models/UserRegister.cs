@@ -11,6 +11,7 @@ namespace RealWorldApp.Commons.Models
         public string Username { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
+        //user register to nie wiem czy powinnien tu być
         public UserRegister User { get; set; }
     }
 
