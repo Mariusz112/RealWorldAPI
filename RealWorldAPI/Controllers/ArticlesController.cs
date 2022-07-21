@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RealWorldApp.Commons.Interfaces;
+using RealWorldApp.Commons.Models;
 
 namespace RealWorldAPI.Controllers
 {
@@ -7,6 +9,8 @@ namespace RealWorldAPI.Controllers
     [ApiController]
     public class ArticlesController : ControllerBase
     {
+
+        private readonly IArticleService _articleService;
 
         /*      [HttpGet("user")]
               public async Task<IActionResult> GetMyInfo()
@@ -19,6 +23,14 @@ namespace RealWorldAPI.Controllers
         public async Task<IActionResult> Articles(string slug)
         {
             throw new NotSupportedException();
+        }
+
+        [HttpPost("articles")]
+        public async Task<IActionResult> AddArticle([FromBody] ArticleAdd request)
+        {
+            
+            var result = await _articleService.AddArticle(request);
+            return Ok(result);
         }
     }
 }

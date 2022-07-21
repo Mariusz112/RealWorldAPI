@@ -109,5 +109,10 @@ namespace RealWorldAPI.Controllers
             return Ok(await _userService.GetProfile(Username));
         }
 
+        /* [HttpPost("api/articles")]
+        public async Task<IActionResult> Authenticate([FromBody] jakisartykulmodel model)
+        {
+
+        } */
     }
 }

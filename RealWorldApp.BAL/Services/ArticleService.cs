@@ -27,30 +27,39 @@ namespace RealWorldApp.BAL.Services
         private readonly ILogger<UserService> _logger;
         private readonly IMapper _mapper;
         private readonly AuthenticationSettings _authenticationSettings;
+        private readonly IArticleRepositorie articleRepositorie;
         private readonly UserManager<User> _userManager;
 
-        public ArticleService(ILogger<UserService> logger, IMapper mapper, AuthenticationSettings authenticationSettings, UserManager<User> userManager)
+        public ArticleService(ILogger<UserService> logger, IMapper mapper, AuthenticationSettings authenticationSettings, IArticleRepositorie articleRepositorie)
         {
             _logger = logger;
             _mapper = mapper;
             _authenticationSettings = authenticationSettings;
-            _userManager = userManager;
+            this.articleRepositorie = articleRepositorie;
+            
         }
 
   
-       public Task<ArticleAddContainer> AddArticle(ArticleAdd request)
+       public async Task<ArticleAddContainer> AddArticle(ArticleAdd request)
        {
            Articles article = new Articles()
            {
                
                Title = request.Title,
-               Slug = request.Slug,
+               
                Text = request.Body,
-               Tag = request.TagList,
+               Tag = request.TagList.Select(tag => new Tags() { Tag = tag}).ToList(),
 
-
+               
 
            };
+
+            // zapisać do bazy
+            await articleRepositorie.AddArticle(article);
+            //po zapisaniu zwrócę container stworzony z obiektu arcicle
+
+            ArticleAddContainer articleAddContainer = new ArticleAddContainer() { Articles = _mapper.Map<ArticleAddContainer>(article) };
+            return articleAddContainer;
        }
 
 
