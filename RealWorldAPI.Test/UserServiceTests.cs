@@ -9,10 +9,13 @@ using RealWorldApp.Commons.Models;
 using RealWorldApp.DAL.Repositories;
 using RealWorldApp.DAL.Repositories.Interfaces;
 
+
 namespace RealWorldAPI.Test
 {
     public class UserServiceTests
     {
+
+
         private Mock<UserManager<User>> GetMockUserManager()
         {
             var userStoreMock = new Mock<IUserStore<User>>();
@@ -233,50 +236,111 @@ namespace RealWorldAPI.Test
 
         [Test]
         public async Task UpdateUser_WithCorrectData_Test() {
+            string id = string.Empty;
+            var request = new UserUpdateModel()
+            {
+                Bio = "test1",
+                Email = "test1@test1.com",
+                Image = "test1",
+                Username = "tester1",
+            };
+
 
             User userBeforeUpdate = new User
             {
-                Bio = "Test",
+                Bio = "test",
                 Email = "test@test.com",
-                Image = "Test",
-                UserName = "Test",
+                Image = "test",
+                UserName = "test",
 
-            };
+            }; 
 
-            UserUpdateModelContainer updatedUser = new UserUpdateModelContainer()
+            UserResponse expectedUserModel = new UserResponse
             {
-                User = new UserUpdateModel 
-                {
-                    Bio = "Test1",
-                    Email = "test@test.com1",
-                    Image = "Test1",
-                    Username = "Test1",
-                }
+                Bio = "test1",
+                Email = "test1@test1.com",
+                Image = "test1",
+                Username = "tester1",
             };
 
-
-            UserUpdateModelContainer stateAfterUpdate = new UserUpdateModelContainer()
-            {
-                User = new UserUpdateModel
-                {
-                    Bio = "Test1",
-                    Email = "test@t234t.com1",
-                    Image = "Test1",
-                    Username = "Username1",
-                }
-            };
-
+ 
             Mock<UserManager<User>> mockUserManager = GetMockUserManager();
             mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(userBeforeUpdate);
             mockUserManager.Setup(x => x.UpdateAsync(It.IsAny<User>())).ReturnsAsync(IdentityResult.Success);
 
-            Mock<IPasswordHasher<User>> mockPasswordHasher = new Mock<IPasswordHasher<User>>();
-            mockPasswordHasher.Setup(x => x.HashPassword(It.IsAny<User>(), It.IsAny<string>())).Returns(userBeforeUpdate.PasswordHash);
-
-            Assert.IsTrue(stateAfterUpdate.GetType) == 
-
+         
+            Mock<IMapper> mockMapper = new Mock<IMapper>();
+            mockMapper.Setup(x => x.Map<UserResponse>(It.IsAny<User>())).Returns(expectedUserModel);
 
 
+
+
+            //Act
+            var userService = new UserService(null, mockMapper.Object, null, mockUserManager.Object);
+
+            var updatedUserProfile = userService.UpdateUser(id,request );
+
+
+
+            //Assert
+
+            
+            Assert.IsTrue(updatedUserProfile != null);
+
+
+        }
+
+        [Test]
+        public async Task UpdateUser_WithNullUser_Test()
+        {
+            string id = string.Empty;
+            var request = new UserUpdateModel()
+            {
+                Bio = "test1",
+                Email = "test1@test1.com",
+                Image = "test1",
+                Username = "tester1",
+            };
+
+            var user = new User()
+            {
+                Bio = "test",
+                Email = "test@test.com",
+                Image = "test",
+                UserName = "test",
+
+            };
+
+
+
+            var userUpdate = new UserResponse()
+            {
+                Bio = "test1",
+                Email = "test1@test1.com",
+                Image = "test1",
+                Username = "tester1",
+            };
+
+
+            Mock<UserManager<User>> userManager = GetMockUserManager();
+            userManager.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(default(User));
+
+
+
+            var mockLogger = new Mock<ILogger<UserService>>();
+
+
+            //Act
+            var userService = new UserService(mockLogger.Object, null, null, userManager.Object);
+
+
+
+
+
+            //Assert
+
+
+            Assert.ThrowsAsync(Is.TypeOf<BadRequestException>().And.Message.EqualTo("Bad request for user"), async delegate { await userService.UpdateUser(id, request); });
 
 
         }
