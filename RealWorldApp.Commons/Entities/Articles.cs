@@ -17,14 +17,13 @@ public class Articles
 
     public string Title { get; set; }
     public string Text { get; set; }
-    public List<User> Username { get; set; }
+    public User Author { get; set; }
     public List<Comments> Comment { get; set; }
     public List<Tags> Tag { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
-    public string Favorited { get; set; }
-    public int FavoritesCount { get; set; }
-    public string Slug { get; set; }
+    public List<User> Favorited { get; set; }
+    public string? Slug { get; set; }
   
 
 }

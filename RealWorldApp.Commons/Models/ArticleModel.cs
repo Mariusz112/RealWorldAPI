@@ -26,13 +26,17 @@ namespace RealWorldApp.Commons.Models
         public ProfileView Profile { get; set; }
     }
 
+
+    public class AddUserModel {
+        public ArticleAdd Article { get; set; }
+    }
     public class ArticleAdd
     {
-        public string Slug { get; set; }
+        
         public string Title { get; set; }
         public string Description { get; set; }
         public string Body { get; set; }
         public List<string> TagList { get; set; }
-       
+       //dodaj slag
     }
 }

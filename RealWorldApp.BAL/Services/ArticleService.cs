@@ -42,14 +42,17 @@ namespace RealWorldApp.BAL.Services
   
        public async Task<ArticleAddContainer> AddArticle(ArticleAdd request)
        {
-           Articles article = new Articles()
-           {
-               
-               Title = request.Title,
-               
-               Text = request.Body,
-               Tag = request.TagList.Select(tag => new Tags() { Tag = tag}).ToList(),
+            Articles article = new Articles()
+            {
 
+                Title = request.Title,
+
+                Text = request.Body,
+                Tag = request.TagList.Select(tag => new Tags() { Tag = tag }).ToList(),
+                Favorited = new List<User>(),
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                
                
 
            };

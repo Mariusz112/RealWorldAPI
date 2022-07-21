@@ -83,7 +83,7 @@ namespace RealWorldAPI.Controllers
             return Ok(await _userService.GetUsers());
         }
 
-        [HttpGet("Username")]
+        [HttpGet("Author")]
         public async Task<IActionResult> GetUserByEmail(string Email)
         {
             return Ok(await _userService.GetUserByEmail(Email));
@@ -103,7 +103,7 @@ namespace RealWorldAPI.Controllers
             return Ok();
         }
 
-        [HttpGet("profiles/{Username}")]
+        [HttpGet("profiles/{Author}")]
         public async Task<IActionResult> GetProfile([FromRoute] string Username)
         {
             return Ok(await _userService.GetProfile(Username));

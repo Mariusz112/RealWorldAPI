@@ -12,6 +12,11 @@ namespace RealWorldAPI.Controllers
 
         private readonly IArticleService _articleService;
 
+        public ArticlesController(IArticleService articleService)
+        {
+            _articleService = articleService;
+        }
+
         /*      [HttpGet("user")]
               public async Task<IActionResult> GetMyInfo()
               {
@@ -25,11 +30,11 @@ namespace RealWorldAPI.Controllers
             throw new NotSupportedException();
         }
 
-        [HttpPost("articles")]
-        public async Task<IActionResult> AddArticle([FromBody] ArticleAdd request)
+        [HttpPost()]
+        public async Task<IActionResult> AddArticle([FromBody] AddUserModel request)
         {
             
-            var result = await _articleService.AddArticle(request);
+            var result = await _articleService.AddArticle(request.Article);
             return Ok(result);
         }
     }

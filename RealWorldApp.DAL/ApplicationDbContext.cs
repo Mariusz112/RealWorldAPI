@@ -24,6 +24,11 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<User>
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.Entity<Articles>()
+        .Property(p => p.Slug)
+        .HasColumnType("nvarchar(5000)")
+        .HasComputedColumnSql("[Title] + '-' + cast([Id] as nvarchar(2000))");
         base.OnModelCreating(builder);
     }
+
 }

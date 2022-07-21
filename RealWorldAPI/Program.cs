@@ -120,6 +120,8 @@ namespace RealWorldAPI
             builder.Services.AddScoped<IUserRepositorie, UserRepositorie>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+            builder.Services.AddScoped<IArticleRepositorie, ArticleRepositorie>();
+            builder.Services.AddScoped<IArticleService, ArticleService>();
 
             var mapperConfig = new MapperConfiguration(mc =>
             {
