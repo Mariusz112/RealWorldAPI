@@ -47,16 +47,16 @@ namespace RealWorldApp.BAL.Services
             {
 
                 Title = request.Title,
-
                 Text = request.Body,
                 Tag = request.TagList.Select(tag => new Tags() { Tag = tag }).ToList(),
                 Favorited = new List<User>(),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 Description = request.Description,
-               
+                //Author = request.User,
 
-           };
+
+            };
 
             // zapisać do bazy
             await articleRepositorie.AddArticle(article);
