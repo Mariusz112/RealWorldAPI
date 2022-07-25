@@ -13,7 +13,7 @@ namespace RealWorldApp.Commons.Models
     public class ProfileView
     {
         public string Bio { get; set; }
-        public bool following { get; set; } = false;
+        public bool Following { get; set; } = false;
         public string Image { get; set; }
         public string Username { get; set; }
     }

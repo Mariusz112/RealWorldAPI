@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using RealWorldApp.DAL;
 using RealWorldApp.Commons.Models;
 using RealWorldApp.Commons.Interfaces;
+using Microsoft.Net.Http.Headers;
+
 namespace RealWorldAPI.Controllers
 {
     [Authorize]
@@ -77,12 +79,12 @@ namespace RealWorldAPI.Controllers
 
         }
 
-        [HttpGet("users")]
-        public async Task<IActionResult> GetUsers()
-        {
-            return Ok(await _userService.GetUsers());
-        }
-
+            [HttpGet("users")]
+             public async Task<IActionResult> GetUsers()
+             {
+                 return Ok(await _userService.GetUsers());
+             } 
+        
         [HttpGet("Author")]
         public async Task<IActionResult> GetUserByEmail(string Email)
         {
@@ -92,9 +94,13 @@ namespace RealWorldAPI.Controllers
         [HttpGet("user")]
         public async Task<IActionResult> GetMyInfo()
         {
-            return Ok(await _userService.GetMyInfo(User));
-        }
+            var user = await _userService.GetMyInfo(User);
+            if (user == null) return NotFound();
 
+
+            return Ok(user);
+        }
+ 
         [HttpPut("user")]
         public async Task<IActionResult> UpdateUser([FromBody] UserUpdateModelContainer request)
         {
@@ -103,10 +109,18 @@ namespace RealWorldAPI.Controllers
             return Ok();
         }
 
-        [HttpGet("profiles/{Author}")]
-        public async Task<IActionResult> GetProfile([FromRoute] string Username)
+        [HttpGet("profiles/{userName}")]
+        public async Task<IActionResult> LoadProfile([FromRoute] string username)
         {
-            return Ok(await _userService.GetProfile(Username));
+            try
+            {
+                var result = await _userService.LoadProfile(username, User.Identity.Name);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         /* [HttpPost("api/articles")]

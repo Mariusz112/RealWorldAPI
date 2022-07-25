@@ -11,6 +11,7 @@ namespace RealWorldApp.Commons
             CreateMap<User, ViewUserModel>();
             CreateMap<User, UserResponse>();
             CreateMap<User, ProfileView>();
+            CreateMap<Articles, ArticleAdd>();
         }
     }
 }

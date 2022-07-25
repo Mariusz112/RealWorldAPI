@@ -133,6 +133,18 @@ namespace RealWorldApp.BAL.Services
 
             UserResponseContainer userContainer = new UserResponseContainer() { User = _mapper.Map<UserResponse>(user) };
             userContainer.User.Token = token;
+            var userResponseContainer = new UserResponseContainer()
+            {
+                User = new UserResponse()
+                {
+                    Email = user.Email,
+                    Username = user.UserName,
+                    Bio = user.Bio,
+                    Image = user.Image,
+                    
+                }
+            };
+
             return userContainer;
         }
 
@@ -188,6 +200,24 @@ namespace RealWorldApp.BAL.Services
 
             return profileContainer;
 
+        }
+
+        public async Task<UserViewContainer> LoadProfile(string username, string id)
+        {
+            User user = await _userManager.FindByNameAsync(username);
+
+            if (user == null)
+            {
+                _logger.LogError($"Can not find user {username}");
+                throw new BadRequestException($"Can not find user {username}");
+            }
+
+
+
+
+            UserViewContainer profileContainer = new UserViewContainer() { Profile = _mapper.Map<ProfileView>(user) };
+
+            return profileContainer;
         }
     }
 }

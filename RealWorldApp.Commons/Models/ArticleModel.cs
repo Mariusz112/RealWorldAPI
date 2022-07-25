@@ -37,6 +37,17 @@ namespace RealWorldApp.Commons.Models
         public string Description { get; set; }
         public string Body { get; set; }
         public List<string> TagList { get; set; }
-       //dodaj slag
+       
+    }
+
+    public class ArticleUploadResponse
+    {
+        public ArticleAddContainer Article { get; set; }
+    }
+
+    public class ArticleResponse
+    {
+        public List<ArticleAddContainer> Articles { get; set; }
+        public int ArticlesCount { get; set; }
     }
 }

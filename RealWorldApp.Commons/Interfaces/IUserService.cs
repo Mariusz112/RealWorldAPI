@@ -14,5 +14,6 @@ namespace RealWorldApp.Commons.Interfaces
         Task<UserResponseContainer> UpdateUser(string id, UserUpdateModel request);
         Task<ViewUserModel> GetUserById(string Id);
         Task<UserViewContainer> GetProfile(string Username);
+        Task<UserViewContainer> LoadProfile(string username, string id);
     }
 }
