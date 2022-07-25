@@ -24,6 +24,7 @@ public class Articles
     public DateTime UpdatedAt { get; set; }
     public List<User> Favorited { get; set; }
     public string? Slug { get; set; }
-  
+    public string Description { get; set; }
+
 
 }

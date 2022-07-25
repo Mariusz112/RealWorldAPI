@@ -53,7 +53,7 @@ namespace RealWorldApp.BAL.Services
                 Favorited = new List<User>(),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
-                
+                Description = request.Description,
                
 
            };
@@ -80,7 +80,7 @@ namespace RealWorldApp.BAL.Services
             //{
             //    Articles = articles.Select(art => new ArticleAddContainer() 
             //    { 
-            //        Body = string.Empty,
+            //        Text = string.Empty,
             //        //TODO
                 
             //    }).ToList(),
@@ -105,7 +105,7 @@ namespace RealWorldApp.BAL.Services
             //{
             //    Articles = articles.Select(art => new ArticleAddContainer() 
             //    { 
-            //        Body = string.Empty,
+            //        Text = string.Empty,
             //        //TODO
                 
             //    }).ToList(),
