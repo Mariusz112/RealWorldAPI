@@ -14,7 +14,8 @@ namespace RealWorldApp.Commons.Interfaces
         Task<ArticleListView> GetArticles(string favorited, string author, int limit, int offset, string currentUserId);
         Task<ArticleToListPack> GetArticle(string currentUserId, string title, int id);
         Task<List<ArticleAdd>> ArticleListToAUP(List<Articles> articles, string currentUserId);
-      //  Task<List<ArticleAdd>> GetArticlesFeed(int limit, int offset, string author);
+        //  Task<List<ArticleAdd>> GetArticlesFeed(int limit, int offset, string author);
+        Task DeleteArticleAsync(string title, int id);
 
     }
 }

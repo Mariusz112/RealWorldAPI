@@ -197,6 +197,10 @@ namespace RealWorldApp.BAL.Services
         }
 
 
-
+        public async Task DeleteArticleAsync(string title, int id)
+        {
+            var artice = await articleRepositorie.GetArticleFromSlug(title, id);
+            await articleRepositorie.DeleteArticleAsync(artice);
+        }
     }
 }

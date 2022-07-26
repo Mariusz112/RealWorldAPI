@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealWorldApp.Commons.Interfaces;
 using RealWorldApp.Commons.Models;
 
 namespace RealWorldAPI.Controllers
 {
+    [Authorize]
     [Route("api")]
     //[ApiController]
     public class ArticlesController : ControllerBase
@@ -37,7 +39,7 @@ namespace RealWorldAPI.Controllers
             var result = await _articleService.AddArticle(request.Article, User.Identity.Name);
             return Ok(result);
         }
-
+        [AllowAnonymous]
         [HttpGet("articles")]
         public async Task<IActionResult> GetArticles([FromQuery] string favorited, [FromQuery] string author, [FromQuery] int limit, [FromQuery] int offset)
         {
@@ -56,7 +58,12 @@ namespace RealWorldAPI.Controllers
         }
 
 
-
+        [HttpDelete("articles/{title}-{id}")]
+        public async Task<IActionResult> DeleteArticle([FromRoute] string title, [FromRoute] int id)
+        {
+            await _articleService.DeleteArticleAsync(title, id);
+            return Ok();
+        }
 
 
 

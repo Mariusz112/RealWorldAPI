@@ -124,5 +124,12 @@ namespace RealWorldApp.DAL.Repositories
 
             return listGlobal;
         }
+
+        public async Task DeleteArticleAsync(Articles artice)
+        {
+            _context.Title.Remove(artice);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }
