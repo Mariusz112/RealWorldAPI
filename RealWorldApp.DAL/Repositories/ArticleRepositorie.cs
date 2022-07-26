@@ -92,5 +92,37 @@ namespace RealWorldApp.DAL.Repositories
 
             return articles;
         }
+        public async Task<List<Articles>> GetArticlesFromAuthor(string author, int limit, int offset)
+        {
+            var allArticles = await _context.Title
+                .Include(u => u.Author)
+                .Where(u => u.Author.UserName == author)
+                .OrderByDescending(u => u.CreatedAt)
+                .Skip(offset)
+                .Take(limit)
+                .ToListAsync();
+
+            return allArticles;
+        }
+
+        public async Task<Articles> GetArticleFromSlug(string title, int id)
+        {
+            var article = await _context.Title
+                .Include(u => u.Author)
+                .FirstOrDefaultAsync(u => u.Title == title && u.Id == id);
+            return article;
+        }
+
+        public async Task<List<Articles>> GetArticlesGlobal(int limit, int offset)
+        {
+            var listGlobal = await _context.Title
+                .Include(u => u.Author)
+                .OrderByDescending(u => u.CreatedAt)
+                .Skip(offset)
+                .Take(limit)
+                .ToListAsync();
+
+            return listGlobal;
+        }
     }
 }

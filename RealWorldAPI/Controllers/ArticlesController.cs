@@ -5,8 +5,8 @@ using RealWorldApp.Commons.Models;
 
 namespace RealWorldAPI.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("api")]
+    //[ApiController]
     public class ArticlesController : ControllerBase
     {
 
@@ -30,11 +30,11 @@ namespace RealWorldAPI.Controllers
             throw new NotSupportedException();
         }
 
-        [HttpPost()]
+        [HttpPost("articles")]
         public async Task<IActionResult> AddArticle([FromBody] AddUserModel request)
         {
             
-            var result = await _articleService.AddArticle(request.Article);
+            var result = await _articleService.AddArticle(request.Article, User.Identity.Name);
             return Ok(result);
         }
 
@@ -45,18 +45,13 @@ namespace RealWorldAPI.Controllers
             return Ok(result);
         }
 
-        [HttpGet("articles/feed")]
-        public async Task<IActionResult> GetArticlesFeed([FromQuery] int limit, [FromQuery] int offset)
-        {
-            var result = await _articleService.GetArticlesFeed(limit, offset, User.Identity.Name);
-            return Ok(result);
-        }
+
 
 
         [HttpGet("articles/{title}-{id}")]
         public async Task<IActionResult> GetArticle([FromRoute] string title, [FromRoute] int id)
         {
-            var result = await _articleService.GetArticle(title, User.Identity.Name, id);
+            var result = await _articleService.GetArticle(User.Identity.Name, title, id);
             return Ok(result);
         }
 

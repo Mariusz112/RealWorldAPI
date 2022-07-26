@@ -10,10 +10,11 @@ namespace RealWorldApp.Commons.Interfaces
 {
     public interface IArticleService 
     {
-        Task<ArticleAddContainer> AddArticle(ArticleAdd request);
-        Task<ArticleResponse> GetArticles(string favorited, string author, int limit, int offset, string currentUserId);
-        Task<ArticleAddContainer> GetArticle(string currentUserId, string title, int id);
+        Task<ArticleToListPack> AddArticle(ArticleAdd request, string CurrentUserId);
+        Task<ArticleListView> GetArticles(string favorited, string author, int limit, int offset, string currentUserId);
+        Task<ArticleToListPack> GetArticle(string currentUserId, string title, int id);
         Task<List<ArticleAdd>> ArticleListToAUP(List<Articles> articles, string currentUserId);
-        Task<List<ArticleAdd>> GetArticlesFeed(int limit, int offset, string? name);
+      //  Task<List<ArticleAdd>> GetArticlesFeed(int limit, int offset, string author);
+
     }
 }
