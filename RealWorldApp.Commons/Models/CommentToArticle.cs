@@ -8,13 +8,16 @@ namespace RealWorldApp.Commons.Models
 {
     public class CommentToArticlePack
     {
-        public CommentToArticle PackedComment { get; set; }
+        public CommentToArticle? Comment { get; set; }
+        public List<CommentToArticle>? Comments { get; set; }
     }
+
 
     public class CommentToArticle
     {
-        public string Comment { get; set; } 
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public string Body { get; set; } 
+        public DateTime? CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public AuthorToList? author { get; set; }
     }
 }

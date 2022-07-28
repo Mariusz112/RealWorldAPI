@@ -10,5 +10,6 @@ namespace RealWorldApp.Commons.Interfaces
     public interface ICommentService
     {
         Task<CommentToArticlePack> AddComment(CommentToArticlePack request, string title, int id, string CurrentUserId);
+        Task<CommentToArticlePack> GetCommets(string title, int id);
     }
 }

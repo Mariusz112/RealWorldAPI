@@ -109,6 +109,7 @@ namespace RealWorldApp.DAL.Repositories
         {
             var article = await _context.Article
                 .Include(u => u.Author)
+                .Include(u => u.Comments)
                 .FirstOrDefaultAsync(u => u.Title == title && u.Id == id);
             return article;
         }

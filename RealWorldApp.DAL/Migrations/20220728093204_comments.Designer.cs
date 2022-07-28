@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RealWorldApp.DAL;
 
@@ -11,9 +12,10 @@ using RealWorldApp.DAL;
 namespace RealWorldApp.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220728093204_comments")]
+    partial class comments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -370,7 +372,7 @@ namespace RealWorldApp.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("ArticlesId")
+                    b.Property<int>("ArticlesId")
                         .HasColumnType("int");
 
                     b.Property<string>("AuthorId")
@@ -385,6 +387,10 @@ namespace RealWorldApp.DAL.Migrations
 
                     b.Property<DateTime>("UpdateAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -577,13 +583,17 @@ namespace RealWorldApp.DAL.Migrations
 
             modelBuilder.Entity("RealWorldApp.Commons.Entities.Comments", b =>
                 {
-                    b.HasOne("RealWorldApp.Commons.Entities.Articles", null)
+                    b.HasOne("RealWorldApp.Commons.Entities.Articles", "Articles")
                         .WithMany("Comments")
-                        .HasForeignKey("ArticlesId");
+                        .HasForeignKey("ArticlesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("RealWorldApp.Commons.Entities.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId");
+
+                    b.Navigation("Articles");
 
                     b.Navigation("Author");
                 });

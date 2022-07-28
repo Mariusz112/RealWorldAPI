@@ -40,25 +40,62 @@ namespace RealWorldApp.BAL.Services
             Articles article = await articleRepositorie.GetArticleFromSlug(title,id);
             User user = await _userManager.FindByIdAsync(CurrentUserId);
 
+            request.Comment.author = new AuthorToList
+            {
+                Bio = user.Bio,
+                Username = user.UserName,
+                Following = false,
+                Image = user.Image
+            };
+
 
             Comments comments = new Comments
             {
                 Author = user,
                 CreatedAt = DateTime.Now,
                 UpdateAt = DateTime.Now,
-                Comment = request.PackedComment.Comment,
-                Articles = article
-
+                Comment = request.Comment.Body,
             };
-            await _commentRepositorie.AddComment(comments);
+
+            await _commentRepositorie.AddComment(comments, title, id);
                 
             var CommentToPack = _mapper.Map<CommentToArticle>(comments);
-            CommentToArticlePack CommentToPackage = new CommentToArticlePack() { PackedComment = request.PackedComment };
+            CommentToArticlePack CommentToPackage = new CommentToArticlePack() { Comment = request.Comment };
 
             return CommentToPackage;
         }
 
+        public async Task<CommentToArticlePack> GetCommets(string title, int id)
+        {
+            var article = await articleRepositorie.GetArticleFromSlug(title,id);
 
+            var comments = article.Comments.ToList();
+            
+
+            var ListToView = new List<CommentToArticle>();
+
+            foreach(var comment in comments)
+            {
+                var buffor = new CommentToArticle()
+                {
+                    Body = article.Text,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
+                    author = new AuthorToList()
+                    {
+                        Bio = article.Author.Bio,
+                        Following = false, 
+                        Username = article.Author.UserName,
+                        Image = article.Author.Image
+                    }
+                };
+                ListToView.Add(buffor);
+            }
+            var result = new CommentToArticlePack();
+            result.Comments = ListToView;
+            return result;
+            
+        }
 
 
     }

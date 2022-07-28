@@ -20,7 +20,7 @@ public class Comments
     //to jest dodane migracja
     public DateTime UpdateAt { get; set; }
 
-    public string Username { get; set; }
-    public User Author { get; set; } = null!;
-    public Articles Articles { get; set; }
+
+    public User Author { get; set; } 
+
 }
