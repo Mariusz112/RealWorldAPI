@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace RealWorldApp.DAL.Migrations
 {
-    public partial class initial : Migration
+    public partial class newdb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -40,19 +40,6 @@ namespace RealWorldApp.DAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DeviceCodes", x => x.UserCode);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "FollowerUsername",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FollowerUsername", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -94,21 +81,6 @@ namespace RealWorldApp.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Title",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Topic = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Title", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -130,15 +102,34 @@ namespace RealWorldApp.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Article",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Slug = table.Column<string>(type: "nvarchar(5000)", nullable: true, computedColumnSql: "[Title] + '-' + cast([Id] as nvarchar(2000))"),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AuthorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Article", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetUsers",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Feed = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Bio = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ArticlesId = table.Column<int>(type: "int", nullable: true),
-                    FavoritiesId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -158,14 +149,36 @@ namespace RealWorldApp.DAL.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_FollowerUsername_FavoritiesId",
-                        column: x => x.FavoritiesId,
-                        principalTable: "FollowerUsername",
+                        name: "FK_AspNetUsers_Article_ArticlesId",
+                        column: x => x.ArticlesId,
+                        principalTable: "Article",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_Title_ArticlesId",
+                        name: "FK_AspNetUsers_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Comment",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ArticlesId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comment", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Comment_Article_ArticlesId",
                         column: x => x.ArticlesId,
-                        principalTable: "Title",
+                        principalTable: "Article",
                         principalColumn: "Id");
                 });
 
@@ -182,9 +195,9 @@ namespace RealWorldApp.DAL.Migrations
                 {
                     table.PrimaryKey("PK_Tag", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tag_Title_ArticlesId",
+                        name: "FK_Tag_Article_ArticlesId",
                         column: x => x.ArticlesId,
-                        principalTable: "Title",
+                        principalTable: "Article",
                         principalColumn: "Id");
                 });
 
@@ -273,33 +286,15 @@ namespace RealWorldApp.DAL.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Comment",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Login = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AuthorId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ArticlesId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Comment", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Comment_AspNetUsers_AuthorId",
-                        column: x => x.AuthorId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Comment_Title_ArticlesId",
-                        column: x => x.ArticlesId,
-                        principalTable: "Title",
-                        principalColumn: "Id");
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_Article_AuthorId",
+                table: "Article",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Article_UserId",
+                table: "Article",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -339,9 +334,9 @@ namespace RealWorldApp.DAL.Migrations
                 column: "ArticlesId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_FavoritiesId",
+                name: "IX_AspNetUsers_UserId",
                 table: "AspNetUsers",
-                column: "FavoritiesId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
@@ -354,11 +349,6 @@ namespace RealWorldApp.DAL.Migrations
                 name: "IX_Comment_ArticlesId",
                 table: "Comment",
                 column: "ArticlesId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Comment_AuthorId",
-                table: "Comment",
-                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceCodes_DeviceCode",
@@ -400,10 +390,33 @@ namespace RealWorldApp.DAL.Migrations
                 name: "IX_Tag_ArticlesId",
                 table: "Tag",
                 column: "ArticlesId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Article_AspNetUsers_AuthorId",
+                table: "Article",
+                column: "AuthorId",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Article_AspNetUsers_UserId",
+                table: "Article",
+                column: "UserId",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Article_AspNetUsers_AuthorId",
+                table: "Article");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Article_AspNetUsers_UserId",
+                table: "Article");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -441,10 +454,7 @@ namespace RealWorldApp.DAL.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "FollowerUsername");
-
-            migrationBuilder.DropTable(
-                name: "Title");
+                name: "Article");
         }
     }
 }

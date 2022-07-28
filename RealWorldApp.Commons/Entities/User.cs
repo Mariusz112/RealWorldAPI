@@ -10,9 +10,10 @@ namespace RealWorldApp.Commons.Entities;
 
 public class User : IdentityUser
 {
-    public string Feed { get; set; } = string.Empty;
     public string Bio { get; set; } = string.Empty;
-    //to nie wiem w sumie
     public string? Image { get; set; }
-    
+    public List<User> FollowedUsers { get; set; } = new List<User>();
+    public List<Articles> LikedArticle { get; set; } = new List<Articles>();
+
+
 }

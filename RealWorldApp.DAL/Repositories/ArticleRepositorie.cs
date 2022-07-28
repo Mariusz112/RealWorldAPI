@@ -23,7 +23,7 @@ namespace RealWorldApp.DAL.Repositories
 
         public async Task AddArticle(Articles article)
         {
-            await _context.Title.AddAsync(article);
+            await _context.Article.AddAsync(article);
             await _context.SaveChangesAsync();
             
         }
@@ -40,7 +40,7 @@ namespace RealWorldApp.DAL.Repositories
             var articles = new List<Articles>();
             if (author != null)
             {
-                articles = await _context.Title
+                articles = await _context.Article
                     .Include(u => u.Author)
                     .Where(u => u.Author.UserName == author)
                     .Take(limit)
@@ -49,7 +49,7 @@ namespace RealWorldApp.DAL.Repositories
             }
             else
             {
-                articles = await _context.Title
+                articles = await _context.Article
                     .Include(u => u.Author)
                     .Take(limit)
                     .OrderByDescending(u => u.CreatedAt)
@@ -76,7 +76,7 @@ namespace RealWorldApp.DAL.Repositories
         {
 
 
-            var allArticles = await _context.Title
+            var allArticles = await _context.Article
                 .Include(u => u.Author)
                 .OrderByDescending(u => u.CreatedAt)
                 .ToListAsync();
@@ -94,7 +94,7 @@ namespace RealWorldApp.DAL.Repositories
         }
         public async Task<List<Articles>> GetArticlesFromAuthor(string author, int limit, int offset)
         {
-            var allArticles = await _context.Title
+            var allArticles = await _context.Article
                 .Include(u => u.Author)
                 .Where(u => u.Author.UserName == author)
                 .OrderByDescending(u => u.CreatedAt)
@@ -107,7 +107,7 @@ namespace RealWorldApp.DAL.Repositories
 
         public async Task<Articles> GetArticleFromSlug(string title, int id)
         {
-            var article = await _context.Title
+            var article = await _context.Article
                 .Include(u => u.Author)
                 .FirstOrDefaultAsync(u => u.Title == title && u.Id == id);
             return article;
@@ -115,7 +115,7 @@ namespace RealWorldApp.DAL.Repositories
 
         public async Task<List<Articles>> GetArticlesGlobal(int limit, int offset)
         {
-            var listGlobal = await _context.Title
+            var listGlobal = await _context.Article
                 .Include(u => u.Author)
                 .OrderByDescending(u => u.CreatedAt)
                 .Skip(offset)
@@ -125,11 +125,19 @@ namespace RealWorldApp.DAL.Repositories
             return listGlobal;
         }
 
-        public async Task DeleteArticleAsync(Articles artice)
+        public async Task DeleteArticleAsync(Articles article)
         {
-            _context.Title.Remove(artice);
+            _context.Article.Remove(article);
             await _context.SaveChangesAsync();
         }
 
+        public async Task UpdateArticle(Articles article)
+        {
+             _context.Article.Update(article);
+            await _context.SaveChangesAsync();
+        }
+
+
     }
 }
+

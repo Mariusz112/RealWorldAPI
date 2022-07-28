@@ -12,8 +12,8 @@ using RealWorldApp.DAL;
 namespace RealWorldApp.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220725145403_MappingProfile")]
-    partial class MappingProfile
+    [Migration("20220727090721_newdb")]
+    partial class newdb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -311,16 +311,13 @@ namespace RealWorldApp.DAL.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("AuthorId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FavoritesCount")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -340,11 +337,16 @@ namespace RealWorldApp.DAL.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Title");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Article");
                 });
 
             modelBuilder.Entity("RealWorldApp.Commons.Entities.Comments", b =>
@@ -358,19 +360,15 @@ namespace RealWorldApp.DAL.Migrations
                     b.Property<int?>("ArticlesId")
                         .HasColumnType("int");
 
-                    b.Property<string>("AuthorId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Comment")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
-                    b.Property<string>("Login")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("UpdateAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -380,26 +378,7 @@ namespace RealWorldApp.DAL.Migrations
 
                     b.HasIndex("ArticlesId");
 
-                    b.HasIndex("AuthorId");
-
                     b.ToTable("Comment");
-                });
-
-            modelBuilder.Entity("RealWorldApp.Commons.Entities.Favorities", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("FollowerUsername");
                 });
 
             modelBuilder.Entity("RealWorldApp.Commons.Entities.Tags", b =>
@@ -450,13 +429,6 @@ namespace RealWorldApp.DAL.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("FavoritiesId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Feed")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
@@ -489,6 +461,9 @@ namespace RealWorldApp.DAL.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -497,8 +472,6 @@ namespace RealWorldApp.DAL.Migrations
 
                     b.HasIndex("ArticlesId");
 
-                    b.HasIndex("FavoritiesId");
-
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -506,6 +479,8 @@ namespace RealWorldApp.DAL.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -565,7 +540,13 @@ namespace RealWorldApp.DAL.Migrations
                 {
                     b.HasOne("RealWorldApp.Commons.Entities.User", "Author")
                         .WithMany()
-                        .HasForeignKey("AuthorId");
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RealWorldApp.Commons.Entities.User", null)
+                        .WithMany("LikedArticle")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Author");
                 });
@@ -575,12 +556,6 @@ namespace RealWorldApp.DAL.Migrations
                     b.HasOne("RealWorldApp.Commons.Entities.Articles", null)
                         .WithMany("Comment")
                         .HasForeignKey("ArticlesId");
-
-                    b.HasOne("RealWorldApp.Commons.Entities.User", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId");
-
-                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("RealWorldApp.Commons.Entities.Tags", b =>
@@ -596,9 +571,9 @@ namespace RealWorldApp.DAL.Migrations
                         .WithMany("Favorited")
                         .HasForeignKey("ArticlesId");
 
-                    b.HasOne("RealWorldApp.Commons.Entities.Favorities", null)
-                        .WithMany("FollowerUsername")
-                        .HasForeignKey("FavoritiesId");
+                    b.HasOne("RealWorldApp.Commons.Entities.User", null)
+                        .WithMany("FollowedUsers")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("RealWorldApp.Commons.Entities.Articles", b =>
@@ -610,9 +585,11 @@ namespace RealWorldApp.DAL.Migrations
                     b.Navigation("Tag");
                 });
 
-            modelBuilder.Entity("RealWorldApp.Commons.Entities.Favorities", b =>
+            modelBuilder.Entity("RealWorldApp.Commons.Entities.User", b =>
                 {
-                    b.Navigation("FollowerUsername");
+                    b.Navigation("FollowedUsers");
+
+                    b.Navigation("LikedArticle");
                 });
 #pragma warning restore 612, 618
         }

@@ -17,10 +17,10 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<User>
     {
 
     }
-    public DbSet<Articles> Title { get; set; }
+    public DbSet<Articles> Article { get; set; }
     public DbSet<Comments> Comment { get; set; }
     public DbSet<Tags> Tag { get; set; }
-    public DbSet<Favorities> FollowerUsername { get; set; }
+    public DbSet<User> User { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -29,6 +29,26 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<User>
         .HasColumnType("nvarchar(5000)")
         .HasComputedColumnSql("[Title] + '-' + cast([Id] as nvarchar(2000))");
         base.OnModelCreating(builder);
+
+
+        builder.Entity<Articles>()
+            .HasOne(p => p.Author);
+
+        builder.Entity<Articles>()
+            .HasMany(p => p.Favorited);
+
+        builder.Entity<Articles>()
+            .HasMany(p => p.Comments);
+
+        builder.Entity<Articles>()
+            .HasMany(p => p.Tags)
+            .WithMany(x => x.Articles);
+
+        builder.Entity<User>()
+            .HasMany(p => p.LikedArticle);
+
+        builder.Entity<User>()
+            .HasMany(p => p.FollowedUsers);
     }
 
 }

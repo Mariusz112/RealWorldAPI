@@ -29,7 +29,7 @@ namespace RealWorldApp.BAL.Services
         private readonly AuthenticationSettings _authenticationSettings;
         private readonly IArticleRepositorie articleRepositorie;
         private readonly UserManager<User> _userManager;
-
+        private readonly ICommentRepositorie _commentRepositorie;
 
         public ArticleService(ILogger<UserService> logger, IMapper mapper, AuthenticationSettings authenticationSettings, IArticleRepositorie articleRepositorie, UserManager<User> userManager)
         {
@@ -38,6 +38,7 @@ namespace RealWorldApp.BAL.Services
             _authenticationSettings = authenticationSettings;
             this.articleRepositorie = articleRepositorie;
             _userManager = userManager;
+            _commentRepositorie = _commentRepositorie;
         }
 
 
@@ -48,7 +49,7 @@ namespace RealWorldApp.BAL.Services
 
                 Title = request.Title,
                 Text = request.Body,
-                Tag = request.TagList.Select(tag => new Tags() { Tag = tag }).ToList(),
+                Tags = request.TagList.Select(tag => new Tags() { Tag = tag }).ToList(),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 Description = request.Description,
@@ -199,8 +200,26 @@ namespace RealWorldApp.BAL.Services
 
         public async Task DeleteArticleAsync(string title, int id)
         {
-            var artice = await articleRepositorie.GetArticleFromSlug(title, id);
-            await articleRepositorie.DeleteArticleAsync(artice);
+            var article = await articleRepositorie.GetArticleFromSlug(title, id);
+            await articleRepositorie.DeleteArticleAsync(article);
+        }
+
+        public async Task<ArticleToListPack> UpdateArticle(ArticleToListPack request, string title, int id)
+        {
+
+            var article = await articleRepositorie.GetArticleFromSlug(title, id);
+
+            article.Title = request.Article.Title;
+            article.Description = request.Article.Description;
+            article.Text = request.Article.Body;
+            //article.Tag = request.TagList
+            article.Slug = $"{request.Article.Title}-{id}";
+
+            await articleRepositorie.UpdateArticle(article);
+
+            request.Article.Slug = article.Slug;
+            return request;
         }
     }
+    
 }

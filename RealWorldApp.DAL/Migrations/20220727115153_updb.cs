@@ -4,7 +4,7 @@
 
 namespace RealWorldApp.DAL.Migrations
 {
-    public partial class mapper : Migration
+    public partial class updb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

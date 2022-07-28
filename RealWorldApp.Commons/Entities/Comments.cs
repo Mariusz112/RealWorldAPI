@@ -15,9 +15,12 @@ public class Comments
     [Required]
     public string Comment { get; set; }
 
-    public string Login { get; set; }
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
+
+    //to jest dodane migracja
+    public DateTime UpdateAt { get; set; }
 
     public string Username { get; set; }
     public User Author { get; set; } = null!;
+    public Articles Articles { get; set; }
 }

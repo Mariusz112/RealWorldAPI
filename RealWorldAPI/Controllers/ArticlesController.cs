@@ -66,6 +66,12 @@ namespace RealWorldAPI.Controllers
         }
 
 
+        [HttpPut("articles/{title}-{id}")]
+        public async Task<IActionResult> UpdateArticle([FromBody] ArticleToListPack request, [FromRoute] string title, [FromRoute] int id)
+        {
+            var result = await _articleService.UpdateArticle(request, title, id);
+            return Ok(result);
+        }
 
 
     }

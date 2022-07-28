@@ -19,7 +19,7 @@ namespace RealWorldApp.DAL.Repositories.Interfaces
         Task<List<Articles>> GetArticlesFromAuthor(string author, int limit, int offset);
         Task <Articles> GetArticleFromSlug(string title, int id);
         Task<List<Articles>> GetArticlesGlobal(int limit, int offset);
-
-        Task DeleteArticleAsync(Articles artice);
+        Task UpdateArticle(Articles article);
+        Task DeleteArticleAsync(Articles article);
     }
 }
