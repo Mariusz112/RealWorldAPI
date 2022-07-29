@@ -12,5 +12,9 @@ namespace RealWorldApp.DAL.Repositories.Interfaces
     {
 
         Task AddComment(Comments comments, string title, int id);
+        Task DeleteCommentAsync(string title, int id, int idcomment);
+       
+
+
     }
 }

@@ -59,8 +59,8 @@ namespace RealWorldApp.BAL.Services
 
             await _commentRepositorie.AddComment(comments, title, id);
                 
-            var CommentToPack = _mapper.Map<CommentToArticle>(comments);
-            CommentToArticlePack CommentToPackage = new CommentToArticlePack() { Comment = request.Comment };
+            var commentToPack = _mapper.Map<CommentToArticle>(comments);
+            CommentToArticlePack CommentToPackage = new CommentToArticlePack() { Comment = commentToPack };
 
             return CommentToPackage;
         }
@@ -74,29 +74,35 @@ namespace RealWorldApp.BAL.Services
 
             var ListToView = new List<CommentToArticle>();
 
-            foreach(var comment in comments)
-            {
-                var buffor = new CommentToArticle()
-                {
-                    Body = article.Text,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
-                    author = new AuthorToList()
-                    {
-                        Bio = article.Author.Bio,
-                        Following = false, 
-                        Username = article.Author.UserName,
-                        Image = article.Author.Image
-                    }
-                };
-                ListToView.Add(buffor);
-            }
+            //foreach(var comment in comments)
+            //{
+            //    var buffor = new CommentToArticle()
+            //    {
+            //        Body = article.Text,
+            //        CreatedAt = DateTime.Now,
+            //        UpdatedAt = DateTime.Now,
+            //        author = new AuthorToList()
+            //        {
+            //            Bio = article.Author.Bio,
+            //            Following = false, 
+            //            Username = article.Author.UserName,
+            //            Image = article.Author.Image
+            //        }
+            //    };
+            //    ListToView.Add(buffor);
+            //}
+            var commentToPack = comments.Select( comment =>  _mapper.Map<CommentToArticle>(comment)).ToList();
             var result = new CommentToArticlePack();
-            result.Comments = ListToView;
+            result.Comments = commentToPack;
             return result;
             
         }
 
+        public async Task DeleteCommentAsync(string title, int id, int idcomment)
+        {
+            //var article = await articleRepositorie.GetArticleFromSlug(title, id);
+            await _commentRepositorie.DeleteCommentAsync(title, id, idcomment);
+        }
 
     }
 

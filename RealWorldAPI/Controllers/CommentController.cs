@@ -7,7 +7,7 @@ namespace RealWorldAPI.Controllers
 {
     [Authorize]
     [Route("api")]
-    [ApiController]
+  //  [ApiController]
     public class CommentController : Controller
     {
 
@@ -39,5 +39,13 @@ namespace RealWorldAPI.Controllers
             var result = await _commentService.GetCommets(title, id);
             return Ok(result);
         }
+
+        [HttpDelete("articles/{title}-{id}/comments/{idcomment}")]
+        public async Task<IActionResult> DeleteComments([FromRoute] string title, [FromRoute] int id, [FromRoute] int idcomment)
+        {
+            await _commentService.DeleteCommentAsync(title, id, idcomment);
+            return Ok();
+        }
+        
     }
 }

@@ -11,5 +11,6 @@ namespace RealWorldApp.Commons.Interfaces
     {
         Task<CommentToArticlePack> AddComment(CommentToArticlePack request, string title, int id, string CurrentUserId);
         Task<CommentToArticlePack> GetCommets(string title, int id);
+        Task DeleteCommentAsync(string title, int id, int idcomment);
     }
 }

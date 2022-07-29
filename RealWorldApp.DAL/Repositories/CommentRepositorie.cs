@@ -28,9 +28,24 @@ namespace RealWorldApp.DAL.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public Task<Articles> GetArticleFromSlug(string title, int id)
+
+
+
+
+        public async Task DeleteCommentAsync(string title, int id, int idcomment)
         {
-            throw new NotImplementedException();
+            var article = await _context.Article
+                .Include(x => x.Comments)
+                .FirstOrDefaultAsync(x => x.Title == title && x.Id == id);
+
+            var comments = await _context.Comment
+                .FirstOrDefaultAsync(x => x.Id == idcomment);
+
+            article.Comments.Remove(comments);
+
+            _context.Comment.Remove(comments);
+            _context.Article.Update(article);
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -20,6 +20,11 @@ namespace RealWorldApp.Commons
                 .ForMember(x => x.Profile, y => y.MapFrom(c => c.Author))
                 .ReverseMap();
 
+            CreateMap<User, AuthorToList>()
+                .ForMember(x => x.Following, y => y.MapFrom(c => false))
+                .ReverseMap();
+
+
             CreateMap<Comments, CommentToArticle>()
                 .ForMember(x => x.Body, y => y.MapFrom(c => c.Comment))
                 .ForMember(x => x.author, y => y.MapFrom(c => c.Author))
