@@ -9,9 +9,9 @@ namespace RealWorldApp.Commons.Entities;
 
 public class Tags
 {
-    [Key]
+    
     public int Id { get; set; }
-    [Required]
+    
     public string Tag { get; set; }
 
     public List<Articles> Articles { get; set; } = new List<Articles>();

@@ -15,5 +15,12 @@ namespace RealWorldAPI.Controllers
         {
             _tagsService = tagsService;
         }
+
+        [HttpGet("tags")]
+        public async Task<IActionResult> GetPopularTags()
+        {
+            var result = await _tagsService.GetPopularTags();
+            return Ok(result);
+        }
     }
 }

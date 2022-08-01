@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using RealWorldApp.Commons.Entities;
 using RealWorldApp.Commons.Interfaces;
+using RealWorldApp.Commons.Models;
 using RealWorldApp.DAL.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,18 @@ namespace RealWorldApp.BAL.Services
             this.articleRepositorie = articleRepositorie;
             _userManager = userManager;
             _tagsRepositorie = tagsRepositorie;
+
+        }
+
+
+        public async Task<PopularTags> GetPopularTags()
+        {
+            var tags = await _tagsRepositorie.GetPopularTags();
+            var pack = new PopularTags()
+            {
+                Tags = tags.Select(x => x.Tag).ToList()
+            };
+            return pack;
         }
     }
 }
