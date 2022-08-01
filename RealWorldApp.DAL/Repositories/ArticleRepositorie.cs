@@ -138,6 +138,11 @@ namespace RealWorldApp.DAL.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<List<Tags>> GetAllTagsAsync()
+        {
+            return await _context.Tag.ToListAsync();
+        }
+        
 
     }
 }

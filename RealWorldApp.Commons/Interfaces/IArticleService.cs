@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace RealWorldApp.Commons.Interfaces
 {
     public interface IArticleService 
@@ -17,7 +18,6 @@ namespace RealWorldApp.Commons.Interfaces
         //  Task<List<ArticleAdd>> GetArticlesFeed(int limit, int offset, string author);
         Task<ArticleToListPack> UpdateArticle(ArticleToListPack request, string title, int id);
         Task DeleteArticleAsync(string title, int id);
-        Task<List<Tags>> CheckTagsAsync(List<string> tagsNames);
 
 
     }

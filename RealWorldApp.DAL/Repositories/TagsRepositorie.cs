@@ -24,7 +24,20 @@ namespace RealWorldApp.DAL.Repositories
                 .ToListAsync();
 
         }
+        public async Task AddTag(string tagName)
+        {
+            var tag = new Tags()
+            {
+                Tag = tagName
+            };
 
+            _context.Tag.Add(tag);
+            await _context.SaveChangesAsync();
+        }
 
+        public async Task<Tags> GetTagByName(string tagName)
+        {
+            return await _context.Tag.Where(x => x.Tag == tagName).FirstOrDefaultAsync();
+        }
     }
 }

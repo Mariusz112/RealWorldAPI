@@ -11,6 +11,7 @@ namespace RealWorldApp.DAL.Repositories.Interfaces
     {
 
         Task<List<Tags>> GetPopularTags();
-
+        Task AddTag(string tagName);
+        Task<Tags> GetTagByName(string tagName);
     }
 }

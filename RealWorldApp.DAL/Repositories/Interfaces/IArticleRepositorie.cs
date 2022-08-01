@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RealWorldApp.DAL.Repositories.Interfaces
 {
-    public interface IArticleRepositorie
+    public interface IArticleRepositorie 
     {
         Task AddArticle(Articles article);
         
@@ -21,5 +21,6 @@ namespace RealWorldApp.DAL.Repositories.Interfaces
         Task<List<Articles>> GetArticlesGlobal(int limit, int offset);
         Task UpdateArticle(Articles article);
         Task DeleteArticleAsync(Articles article);
+        Task<List<Tags>> GetAllTagsAsync();
     }
 }
