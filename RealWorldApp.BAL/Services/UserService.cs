@@ -212,7 +212,12 @@ namespace RealWorldApp.BAL.Services
                 throw new BadRequestException($"Can not find user {username}");
             }
 
-
+            var userfollows = await _userManager.FindByNameAsync(id);
+            var follows = false;
+            if (userfollows != null)
+            {
+                follows = userfollows.FollowedUsers.Contains(user);
+            }
 
 
             UserViewContainer profileContainer = new UserViewContainer() { Profile = _mapper.Map<ProfileView>(user) };

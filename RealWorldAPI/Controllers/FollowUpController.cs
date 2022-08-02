@@ -16,12 +16,12 @@ namespace RealWorldAPI.Controllers
             _followService = followService;
         }
 
-        /*   [HttpPost("profiles/{username}/follow")]
-           public async Task<IActionResult> FollowUser([FromRoute] string username )
-           {
-               var result = await _followService.AddFollow(username);
-               return Ok(result);
-          }
-          */
+        [HttpPost("profiles/{username}/follow")]
+        public async Task<IActionResult> FollowUser([FromRoute] string username )
+        {
+            var result = await _followService.AddFollow(User.Identity.Name, username);
+            return Ok(result);
+        }
+        
     }
 }
