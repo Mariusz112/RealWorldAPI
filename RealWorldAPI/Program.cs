@@ -126,6 +126,8 @@ namespace RealWorldAPI
             builder.Services.AddScoped<ICommentService, CommentService>();
             builder.Services.AddScoped<ITagsRepositorie, TagsRepositorie>();
             builder.Services.AddScoped<ITagsService, TagsService>();
+            builder.Services.AddScoped<IFollowRepositorie, FollowRepositorie>();
+            builder.Services.AddScoped<IFollowService, FollowService>();
 
             var mapperConfig = new MapperConfiguration(mc =>
             {

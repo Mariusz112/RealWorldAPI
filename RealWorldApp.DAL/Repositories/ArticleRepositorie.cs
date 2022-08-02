@@ -96,6 +96,7 @@ namespace RealWorldApp.DAL.Repositories
         {
             var allArticles = await _context.Article
                 .Include(u => u.Author)
+                .Include(u => u.Tags)
                 .Where(u => u.Author.UserName == author)
                 .OrderByDescending(u => u.CreatedAt)
                 .Skip(offset)
@@ -110,6 +111,7 @@ namespace RealWorldApp.DAL.Repositories
             var article = await _context.Article
                 .Include(u => u.Author)
                 .Include(u => u.Comments)
+                .Include(u => u.Tags)
                 .FirstOrDefaultAsync(u => u.Title == title && u.Id == id);
             return article;
         }
@@ -118,6 +120,7 @@ namespace RealWorldApp.DAL.Repositories
         {
             var listGlobal = await _context.Article
                 .Include(u => u.Author)
+                .Include(u => u.Tags)
                 .OrderByDescending(u => u.CreatedAt)
                 .Skip(offset)
                 .Take(limit)
@@ -142,7 +145,22 @@ namespace RealWorldApp.DAL.Repositories
         {
             return await _context.Tag.ToListAsync();
         }
-        
+
+        public async Task<List<Articles>> GetArticlesByTags(string tag, int limit, int offset)
+        {
+            return await _context.Tag
+                .Include(u => u.Articles)
+                    .ThenInclude(u => u.Author)
+                .Where(u => u.Tag == tag)
+                .SelectMany(u => u.Articles)
+                .OrderByDescending(u => u.CreatedAt)
+                .Skip(offset)
+                .Take(limit)
+                .ToListAsync();
+
+        }
+
+
 
     }
 }

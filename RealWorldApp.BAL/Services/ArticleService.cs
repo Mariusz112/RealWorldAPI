@@ -16,7 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-
+using RealWorldApp.DAL.Repositories;
 
 namespace RealWorldApp.BAL.Services
 {
@@ -30,8 +30,9 @@ namespace RealWorldApp.BAL.Services
         private readonly IArticleRepositorie articleRepositorie;
         private readonly UserManager<User> _userManager;
         private readonly ICommentRepositorie _commentRepositorie;
+        private readonly ITagsRepositorie _tagsRepositorie;
 
-        public ArticleService(ILogger<UserService> logger, IMapper mapper, AuthenticationSettings authenticationSettings, IArticleRepositorie articleRepositorie, UserManager<User> userManager)
+        public ArticleService(ILogger<UserService> logger, IMapper mapper, AuthenticationSettings authenticationSettings, IArticleRepositorie articleRepositorie, UserManager<User> userManager, ITagsRepositorie tagsRepositorie)
         {
             _logger = logger;
             _mapper = mapper;
@@ -39,17 +40,19 @@ namespace RealWorldApp.BAL.Services
             this.articleRepositorie = articleRepositorie;
             _userManager = userManager;
             _commentRepositorie = _commentRepositorie;
+            _tagsRepositorie = tagsRepositorie;
         }
 
 
         public async Task<ArticleToListPack> AddArticle(ArticleAdd request, string CurrentUserId)
         {
+            var tags = await CheckTagsAsync(request.TagList);
             Articles article = new Articles()
             {
 
                 Title = request.Title,
                 Text = request.Body,
-                Tags = request.TagList.Select(tag => new Tags() { Tag = tag }).ToList(),
+                Tags = tags,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 Description = request.Description,
@@ -88,7 +91,7 @@ namespace RealWorldApp.BAL.Services
             return pack;
         }
 
-        public async Task<ArticleListView> GetArticles(string favorited, string author, int limit, int offset, string currentUserId)
+        public async Task<ArticleListView> GetArticles(string favorited, string author, int limit, int offset, string currentUserId, string tags)
         {
             var articlelist = new List<ArticleToList>();
             List<Articles> articles;
@@ -96,10 +99,16 @@ namespace RealWorldApp.BAL.Services
             {
                 articles = await articleRepositorie.GetArticlesFromAuthor(author, limit, offset);
             }
+            else if(tags != null)
+            {
+                articles = await articleRepositorie.GetArticlesByTags(tags, limit, offset);
+            }
             else
             {
                 articles = await articleRepositorie.GetArticlesGlobal(limit, offset);
             }
+
+
             //if author null then pick all of them
             var result = new ArticleListView();
             foreach (var article in articles)
@@ -110,7 +119,7 @@ namespace RealWorldApp.BAL.Services
                     Title = article.Title,
                     Description = article.Description,
                     Body = article.Text,
-                    //TagList = article.Tag.Select(x => x.UserName)
+                    TagList = article.Tags.Select(x => x.Tag).ToList(),
                     CreatedAt = article.CreatedAt,
                     UpdatedAt = article.UpdatedAt,
                     Favorited = false, //todo
@@ -220,6 +229,32 @@ namespace RealWorldApp.BAL.Services
             request.Article.Slug = article.Slug;
             return request;
         }
+
+        public async Task<List<Tags>> CheckTagsAsync(List<string> tagsNames)
+        {
+            var tagsInDb = await _tagsRepositorie.GetPopularTags();
+
+            foreach (var tag in tagsNames)
+            {
+                if (tagsInDb.FirstOrDefault<Tags>(x => x.Tag == tag) == null)
+                {
+                    await _tagsRepositorie.AddTag(tag);
+                }
+            }
+
+            var tagList = new List<Tags>();
+            Tags buff;
+
+            foreach (var tag in tagsNames)
+            {
+                buff = await _tagsRepositorie.GetTagByName(tag);
+                tagList.Add(buff);
+            }
+
+            return tagList;
+        }
+
+
     }
     
 }

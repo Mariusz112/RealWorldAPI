@@ -41,9 +41,9 @@ namespace RealWorldAPI.Controllers
         }
         [AllowAnonymous]
         [HttpGet("articles")]
-        public async Task<IActionResult> GetArticles([FromQuery] string favorited, [FromQuery] string author, [FromQuery] int limit, [FromQuery] int offset)
+        public async Task<IActionResult> GetArticles([FromQuery] string favorited, [FromQuery] string author, [FromQuery] int limit, [FromQuery] int offset, [FromQuery] string tag)
         {
-            var result = await _articleService.GetArticles(favorited, author, limit, offset, User.Identity.Name);
+            var result = await _articleService.GetArticles(favorited, author, limit, offset, User.Identity.Name, tag);
             return Ok(result);
         }
 
