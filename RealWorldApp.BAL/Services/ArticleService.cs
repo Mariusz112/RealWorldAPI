@@ -31,8 +31,9 @@ namespace RealWorldApp.BAL.Services
         private readonly UserManager<User> _userManager;
         private readonly ICommentRepositorie _commentRepositorie;
         private readonly ITagsRepositorie _tagsRepositorie;
+        private readonly IFavoriteRepositorie _favoriteRepositorie;
 
-        public ArticleService(ILogger<UserService> logger, IMapper mapper, AuthenticationSettings authenticationSettings, IArticleRepositorie articleRepositorie, UserManager<User> userManager, ITagsRepositorie tagsRepositorie)
+        public ArticleService(ILogger<UserService> logger, IMapper mapper, AuthenticationSettings authenticationSettings, IArticleRepositorie articleRepositorie, UserManager<User> userManager, ITagsRepositorie tagsRepositorie, IFavoriteRepositorie favoriteRepositorie)
         {
             _logger = logger;
             _mapper = mapper;
@@ -41,6 +42,7 @@ namespace RealWorldApp.BAL.Services
             _userManager = userManager;
             _commentRepositorie = _commentRepositorie;
             _tagsRepositorie = tagsRepositorie;
+            _favoriteRepositorie = favoriteRepositorie;
         }
 
 
@@ -93,15 +95,20 @@ namespace RealWorldApp.BAL.Services
 
         public async Task<ArticleListView> GetArticles(string favorited, string author, int limit, int offset, string currentUserId, string tags)
         {
+            var user = await _userManager.FindByIdAsync(currentUserId);
             var articlelist = new List<ArticleToList>();
             List<Articles> articles;
             if (author != null)
             {
                 articles = await articleRepositorie.GetArticlesFromAuthor(author, limit, offset);
             }
-            else if(tags != null)
+            else if (tags != null) //do zmiany na isnullorempty
             {
                 articles = await articleRepositorie.GetArticlesByTags(tags, limit, offset);
+            }
+            else if (!string.IsNullOrEmpty(favorited))
+            {
+                articles = await _favoriteRepositorie.GetFavoritedArticles(currentUserId, limit, offset);
             }
             else
             {
@@ -122,12 +129,12 @@ namespace RealWorldApp.BAL.Services
                     TagList = article.Tags.Select(x => x.Tag).ToList(),
                     CreatedAt = article.CreatedAt,
                     UpdatedAt = article.UpdatedAt,
-                    Favorited = false, //todo
-                    FavoritesCount = 0, //todo
+                    Favorited = user.LikedArticle.Contains(article),
+                    FavoritesCount = article.Favorited.Count(),
                     author = new AuthorToList()
                     {
                         Bio = article.Author.Bio,
-                        Following = false, //2do
+                        Following = false,
                         Username = article.Author.UserName,
                         Image = article.Author.Image
                     }

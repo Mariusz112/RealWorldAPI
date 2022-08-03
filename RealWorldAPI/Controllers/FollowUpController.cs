@@ -22,6 +22,13 @@ namespace RealWorldAPI.Controllers
             var result = await _followService.AddFollow(User.Identity.Name, username);
             return Ok(result);
         }
-        
+
+        [HttpDelete("profiles/{username}/follow")]
+        public async Task<IActionResult> UnFollowUser([FromRoute] string username)
+        {
+            var result = await _followService.RemoveFollow(User.Identity.Name, username);
+            return Ok(result);
+        }
+
     }
 }

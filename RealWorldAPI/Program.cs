@@ -128,6 +128,8 @@ namespace RealWorldAPI
             builder.Services.AddScoped<ITagsService, TagsService>();
             builder.Services.AddScoped<IFollowRepositorie, FollowRepositorie>();
             builder.Services.AddScoped<IFollowService, FollowService>();
+            builder.Services.AddScoped<IFavoriteRepositorie, FavoriteRepositorie>();
+            builder.Services.AddScoped<IFavoriteService, FavoriteService>();
 
             var mapperConfig = new MapperConfiguration(mc =>
             {

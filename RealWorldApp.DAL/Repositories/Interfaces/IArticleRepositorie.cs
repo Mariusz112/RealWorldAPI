@@ -23,5 +23,7 @@ namespace RealWorldApp.DAL.Repositories.Interfaces
         Task DeleteArticleAsync(Articles article);
         Task<List<Tags>> GetAllTagsAsync();
         Task<List<Articles>> GetArticlesByTags(string tag, int limit, int offset);
+        //Task<List<Articles>> GetArticlesFeed(int limit, int offset, string currentUserId);
+
     }
 }

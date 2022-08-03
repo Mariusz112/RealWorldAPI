@@ -20,7 +20,7 @@ namespace RealWorldApp.BAL.Services
         private readonly ILogger _logger;
 
 
-        public FollowService(UserManager<User> userManager, IFollowRepositorie followRepositorie, ILogger logger)
+        public FollowService(UserManager<User> userManager, IFollowRepositorie followRepositorie, ILogger<FollowService> logger)
         {
             _userManager = userManager;
             _followRepositorie = followRepositorie;
@@ -30,7 +30,7 @@ namespace RealWorldApp.BAL.Services
         public async Task<UserViewContainer> AddFollow(string currentUser, string userToFollow)
         {
             var loggedUser = await _userManager.FindByIdAsync(currentUser);
-            if(loggedUser != null)
+            if(loggedUser == null)
             {
                 _logger.LogError("Cant 't find active user");
                 throw new Exception("Can't find active user");
@@ -58,7 +58,41 @@ namespace RealWorldApp.BAL.Services
             };
 
 
+            return response;
+        }
 
+        public async Task<UserViewContainer> RemoveFollow(string currentUser, string userToFollow)
+        {
+            var loggedUser = await _userManager.FindByIdAsync(currentUser);
+            if (loggedUser == null)
+            {
+                _logger.LogError("Cant 't find active user");
+                throw new Exception("Can't find active user");
+
+            }
+
+            var NewUserToFollow = await _userManager.FindByNameAsync(userToFollow);
+
+            if (loggedUser.FollowedUsers.Contains(NewUserToFollow))
+            {
+                loggedUser.FollowedUsers.Remove(NewUserToFollow);
+                await _userManager.UpdateAsync(loggedUser);
+            }
+
+            var response = new UserViewContainer()
+            {
+                Profile = new ProfileView()
+                {
+                    Username = NewUserToFollow.UserName,
+                    Bio = NewUserToFollow.Bio,
+                    Image = NewUserToFollow.Image,
+                    Following = true
+
+                }
+            };
+
+
+            return response;
         }
     }
 }
