@@ -32,8 +32,9 @@ namespace RealWorldApp.BAL.Services
         private readonly ICommentRepositorie _commentRepositorie;
         private readonly ITagsRepositorie _tagsRepositorie;
         private readonly IFavoriteRepositorie _favoriteRepositorie;
+        private readonly IUserRepositorie _userRepositorie;
 
-        public ArticleService(ILogger<UserService> logger, IMapper mapper, AuthenticationSettings authenticationSettings, IArticleRepositorie articleRepositorie, UserManager<User> userManager, ITagsRepositorie tagsRepositorie, IFavoriteRepositorie favoriteRepositorie)
+        public ArticleService(ILogger<UserService> logger, IMapper mapper, AuthenticationSettings authenticationSettings, IArticleRepositorie articleRepositorie, UserManager<User> userManager, ITagsRepositorie tagsRepositorie, IFavoriteRepositorie favoriteRepositorie, IUserRepositorie userRepositorie)
         {
             _logger = logger;
             _mapper = mapper;
@@ -43,6 +44,7 @@ namespace RealWorldApp.BAL.Services
             _commentRepositorie = _commentRepositorie;
             _tagsRepositorie = tagsRepositorie;
             _favoriteRepositorie = favoriteRepositorie;
+            _userRepositorie = userRepositorie;
         }
 
 
@@ -142,7 +144,7 @@ namespace RealWorldApp.BAL.Services
 
                 articlelist.Add(buffor);
             }
-
+                
             result.Articles = articlelist;
             result.ArticleCount = 10; //todo
             return result;
@@ -174,6 +176,11 @@ namespace RealWorldApp.BAL.Services
                 return result;
             }
         */
+
+
+
+
+
         public Task<List<ArticleAdd>> ArticleListToAUP(List<Articles> articles, string currentUserId)
         {
             throw new NotImplementedException();
@@ -262,6 +269,45 @@ namespace RealWorldApp.BAL.Services
         }
 
 
+
+        public async Task<ArticleListView> GetArticlesFeed(int limit, int offset, string currentUserId)
+        {
+            var articlelist = new List<ArticleToList>();
+            var user = await _userManager.FindByIdAsync(currentUserId);
+
+            var articles = await articleRepositorie.GetArticleFeed(limit, offset, currentUserId);
+
+            //if author null then pick all of them
+            var result = new ArticleListView();
+            foreach (var article in articles)
+            {
+                var buffor = new ArticleToList()
+                {
+                    Slug = article.Slug,
+                    Title = article.Title,
+                    Description = article.Description,
+                    Body = article.Text,
+                    TagList = article.Tags.Select(x => x.Tag).ToList(),
+                    CreatedAt = article.CreatedAt,
+                    UpdatedAt = article.UpdatedAt,
+                    Favorited = user.LikedArticle.Contains(article),
+                    FavoritesCount = article.Favorited.Count(),
+                    author = new AuthorToList()
+                    {
+                        Bio = article.Author.Bio,
+                        Following = false,
+                        Username = article.Author.UserName,
+                        Image = article.Author.Image
+                    }
+                };
+
+                articlelist.Add(buffor);
+            }
+
+            result.Articles = articlelist;
+            result.ArticleCount = 10; //todo
+            return result;
+        }
     }
     
 }

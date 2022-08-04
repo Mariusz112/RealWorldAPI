@@ -13,9 +13,10 @@ namespace RealWorldApp.DAL.Repositories.Interfaces
         Task AddArticle(Articles article);
         
         Task<List<Articles>> GetNewArticles(string favorited, string author, int limit);
-        
-        Task <List<Articles>> GetArticlesFeed(string author, int limit);
-        Task <List<Articles>> GetNewArticleFeed(string currentUserId, int limit);
+       
+    
+        //Task <List<Articles>> GetArticlesFeed(string author, int limit);
+        Task<List<Articles>> GetNewArticles(string author, int limit, int offset);
         Task<List<Articles>> GetArticlesFromAuthor(string author, int limit, int offset);
         Task <Articles> GetArticleFromSlug(string title, int id);
         Task<List<Articles>> GetArticlesGlobal(int limit, int offset);
@@ -24,6 +25,8 @@ namespace RealWorldApp.DAL.Repositories.Interfaces
         Task<List<Tags>> GetAllTagsAsync();
         Task<List<Articles>> GetArticlesByTags(string tag, int limit, int offset);
         //Task<List<Articles>> GetArticlesFeed(int limit, int offset, string currentUserId);
+        // Task<List<Articles>> GetFeed(User user);
+        Task<List<Articles>> GetArticleFeed(int limit, int offset, string currentUserId);
 
     }
 }

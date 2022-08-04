@@ -15,12 +15,12 @@ namespace RealWorldApp.DAL.Repositories
             _context = context;
         }
 
-
+/*
         public async Task<User> GetUserById(string Id)
         {
             return await _context.Users.Where(x => x.Id == Id).FirstOrDefaultAsync();
         }
-
+*/
         public async Task AddArticle(Articles article)
         {
             await _context.Article.AddAsync(article);
@@ -35,7 +35,7 @@ namespace RealWorldApp.DAL.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<Articles>> GetNewArticles( string author, int limit)
+        public async Task<List<Articles>> GetNewArticles( string author, int limit, int offset)
         {
             var articles = new List<Articles>();
             if (author != null)
@@ -67,7 +67,7 @@ namespace RealWorldApp.DAL.Repositories
         {
             throw new NotImplementedException();
         }
-
+        /*
         public Task<List<Articles>> GetArticlesFeed(string currentUserId, int limit)
         {
             throw new NotImplementedException();
@@ -92,6 +92,7 @@ namespace RealWorldApp.DAL.Repositories
 
             return articles;
         }
+        */
         public async Task<List<Articles>> GetArticlesFromAuthor(string author, int limit, int offset)
         {
             var allArticles = await _context.Article
@@ -160,7 +161,19 @@ namespace RealWorldApp.DAL.Repositories
 
         }
 
+        public async Task<List<Articles>> GetArticleFeed(int limit, int offset, string currentUserId)
+        {
+            var listOfFollowedUser = await _context.User.Where(u => u.Id == currentUserId)
+                .Include(fu => fu.FollowedUsers)
+                .SelectMany(fo => fo.FollowedUsers.Select(fu => fu.Id))
+                .ToListAsync();
 
+            var articles = await _context.Article.Where(ar => listOfFollowedUser.Contains(ar.Author.Id))
+                .Include(au => au.Author)
+                .ToListAsync();
+
+            return articles;
+        }
 
     }
 }

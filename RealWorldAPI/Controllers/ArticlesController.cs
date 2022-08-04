@@ -47,7 +47,12 @@ namespace RealWorldAPI.Controllers
             return Ok(result);
         }
 
-
+        [HttpGet("articles/feed")]
+        public async Task<IActionResult> GetArticlesFeed([FromQuery] int limit, [FromQuery] int offset)
+        {
+            var result = await _articleService.GetArticlesFeed(limit, offset, User.Identity.Name);
+            return Ok(result);
+        }
 
 
         [HttpGet("articles/{title}-{id}")]
