@@ -24,14 +24,14 @@ namespace RealWorldAPI
             var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
             var builder = WebApplication.CreateBuilder(args);
 
-            
+
 
             var logger = LoggerFactory.Create(config =>
             {
                 config.AddConsole();
             }).CreateLogger("Program");
 
-            
+
 
 
             var authenticationSettings = new AuthenticationSettings();
@@ -49,9 +49,22 @@ namespace RealWorldAPI
                 });
             });
 
+            var inmemory = builder.Configuration.GetValue<bool>("UseInMemory");
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+            builder.Services.AddDbContext<ApplicationDbContext>(options => {
+                if (inmemory)
+                {
+                    options.UseInMemoryDatabase("InMemory");
+                }
+                else
+                {
+                    options.UseSqlServer(connectionString);
+                }
+
+
+            });
+          
+            
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
